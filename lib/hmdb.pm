@@ -157,7 +157,7 @@ sub get_matches_from_hmdb {
     if ( (defined $mass) and (defined $delta) and (defined $mode) ) {
     	my $url = 'http://www.hmdb.ca/spectra/spectra/ms/search?utf8=TRUE&query_masses='.$mass.'&tolerance='.$delta.'&mode='.$mode.'&commit=Search' ;
     	
-    	print $url."\n" ;
+#    	print $url."\n" ;
 	    
 	    my $oUrl = url($url);
 	    $page = get($oUrl);
@@ -186,8 +186,7 @@ sub get_matches_from_hmdb_ua {
     my ( $masses, $delta, $mode ) = @_ ;
     
     my @page = () ;
-    
-    use LWP::UserAgent;
+
 	my $ua = new LWP::UserAgent;
 	$ua->agent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36");
 	 
