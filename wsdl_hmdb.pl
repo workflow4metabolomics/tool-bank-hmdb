@@ -31,12 +31,12 @@ my ( $masses_file, $col_id, $col_mass, $line_header ) = ( undef, undef, undef, u
 my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, undef ) ;
 
 ## FOR TEST : with masses_file
-( $masses_file, $delta, $molecular_species, $col_id, $col_mass, $line_header ) = ( 'E:\\TESTs\\galaxy\\hmdb\\ex_HR_set10entries_with_formula_and_header.txt', 0.05, 'neutral', 1, 2, 0 ) ;
+#( $masses_file, $delta, $molecular_species, $col_id, $col_mass, $line_header ) = ( 'E:\\TESTs\\galaxy\\hmdb\\ex_HR_set10entries_with_formula_and_header.txt', 0.05, 'neutral', 1, 2, 0 ) ;
 
 ## with a only one mass
-#( $mass, $delta, $molecular_species ) = ( 160.081 , 0.1, 'neutral', 1, 2, 1 ) ; 
+#( $mass, $delta, $molecular_species ) = ( 160.081 , 0.5, 'neutral' ) ; 
 
-( $out_tab, $out_html ) = ('E:\\TESTs\\galaxy\\hmdb\\results_hmdb.txt', 'E:\\TESTs\\galaxy\\hmdb\\results_hmdb.html') ; ## 2d case
+#( $out_tab, $out_html ) = ('E:\\TESTs\\galaxy\\hmdb\\results_hmdb.txt', 'E:\\TESTs\\galaxy\\hmdb\\results_hmdb.html') ; ## 2d case
 
 #=============================================================================
 #                                Manage EXCEPTIONS
@@ -116,21 +116,17 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 	if (defined $masses_file) {
 		$results = [] ; # prepare arrays ref
 		my $submasses = $oHmdb->extract_sub_mz_lists($masses, $CONF->{HMDB_LIMITS} ) ;
-		print Dumper $submasses ;
 		
 		foreach my $mzs ( @{$submasses} ) {
 			
 			my $result = undef ;
 			my ( $hmdb_masses, $nb_masses_to_submit ) = $oHmdb->prepare_multi_masses_query($mzs) ;
-			print "\n********** $hmdb_masses\n" ;
 			$hmdb_pages = $oHmdb->get_matches_from_hmdb_ua($hmdb_masses, $delta, $molecular_species) ;
 			$result = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $mzs) ; ## hash format result
 			
 			$results = [ @$results, @$result ] ;
 		}
-		print Dumper $results ;
 	}
-	
 	
 	## Uses N mz and theirs entries per page (see config file).
 	# how many pages you need with your input mz list?
