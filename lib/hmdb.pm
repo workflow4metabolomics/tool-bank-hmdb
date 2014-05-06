@@ -696,13 +696,13 @@ sub write_csv_one_mass {
 
 	    			print CSV "$id\t$mass\t$entry->{ENTRY_ENTRY_ID}\t" ;
 	    			## print cpd name
-	    			if ( $entry->{ENTRY_NAME} ) { 	print CSV "$entry->{ENTRY_NAME}\t" ; }
-	    			else { 							print CSV "N/A\t" ; }
+	    			if ( $entry->{ENTRY_FORMULA} ) { print CSV "$entry->{ENTRY_FORMULA}\t" ; }
+	    			else { 							 print CSV "N/A\t" ; }
 	    			## print cpd mw
 	    			if ( $entry->{ENTRY_CPD_MZ} ) { print CSV "$entry->{ENTRY_CPD_MZ}\t" ; }
 	    			else { 							print CSV "N/A\t" ; }
 	    			## print delta
-	    			if ( $entry->{ENTRY_DELTA} ) { print CSV "$entry->{ENTRY_DELTA}\n" ; }
+	    			if ( $entry->{ENTRY_DELTA} ) {  print CSV "$entry->{ENTRY_DELTA}\n" ; }
 	    			else { 							print CSV "N/A\n" ; }
 		    	}
 		    	$check_rebond = 0 ; ## reinit double control
