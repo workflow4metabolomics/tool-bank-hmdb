@@ -574,14 +574,14 @@ sub set_lm_matrix_object {
 	    		push ( @anti_redondant, $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID} ) ;
 		    			    	
 		    	my $delta = $entries->[$index_mz][$index_entries]{ENTRY_DELTA} ;
-	    		my $name =  $entries->[$index_mz][$index_entries]{ENTRY_NAME} ;
+	    		my $formula =  $entries->[$index_mz][$index_entries]{ENTRY_FORMULA} ;
 	    		my $hmdb_id = $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID}  ;
 		    	
 		    	## METLIN data display model 
 		   		## entry1=VAR1::VAR2::VAR3::VAR4|entry2=VAR1::VAR2::VAR3::VAR4|...
 		   		# manage final pipe
-		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $delta.'::('.$name.')::'.$hmdb_id.'|' ; }
-		   		else { 						   			$cluster_col .= $delta.'::('.$name.')::'.$hmdb_id ; 	}
+		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $delta.'::('.$formula.')::'.$hmdb_id.'|' ; }
+		   		else { 						   			$cluster_col .= $delta.'::('.$formula.')::'.$hmdb_id ; 	}
 	    		
 	    	}
 	    	$check_rebond = 0 ; ## reinit double control
