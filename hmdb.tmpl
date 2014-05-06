@@ -90,22 +90,24 @@
 		<div id="ms_search_0" class="ms-search-table"></div>
 		<!-- HeadRows-->
 		<table id="detail_table" class="detail">
-			<col style="width:20px;"><!-- Ids (m/z)-->
-			<col style="width:20px;"><!-- Mass (m/z)-->
-			<col style="width:20px;"><!-- Compound-->
+			<col style="width:30px;"><!-- Ids (m/z)-->
+			<col style="width:30px;"><!-- Mass (m/z)-->
+			<col style="width:30px;"><!-- Compound-->
 			<col style="width:120px;"><!-- name-->
 			<col style="width:40px;"><!-- adduct-->
-			<col style="width:30px;"><!-- adduct mw-->
+			<col style="width:50px;"><!-- adduct type-->
+			<col style="width:60px;"><!-- adduct mw-->
 			<col style="width:60px;"><!-- cpd mw-->
 			<col style="width:50px;"><!-- delta-->
 			<thead>
 				<th>ID from input</th>
 				<th>Mass (m/z)</th>
-				<th>Compound</th>
-				<th>Name</th>
-				<th>Adduct</th>
-				<th>Adduct MW (Da)</th>
+				<th>Compound_ID</th>
+				<th>Formula</th>
 				<th>Compound MW (Da)</th>
+				<th>Adduct</th>
+				<th>Adduct_Type</th>
+				<th>Adduct MW (Da)</th>
 				<th>Delta</th>
 			</thead>
 			<TMPL_LOOP NAME=PAGES>
@@ -114,16 +116,17 @@
 				<tr class="<TMPL_VAR NAME=MZ_COLOR>">
 					<td class="center-align" ><TMPL_VAR NAME=MASSES_ID_QUERY></td>
 					<td id="<TMPL_VAR NAME=MASSES_NB>" class="center-align" ><TMPL_VAR NAME=MASSES_MZ_QUERY></td>
-					<td class="center-align" colspan="6"></td>
+					<td class="center-align" colspan="7"></td>
 				</tr>
 				<TMPL_LOOP NAME=ENTRIES>
 				<tr class="<TMPL_VAR NAME=ENTRY_COLOR>">
 					<td class="center-align" colspan="2"></td>
 					<td class="center-align"><a href="http://www.hmdb.ca/metabolites/<TMPL_VAR NAME=ENTRY_ENTRY_ID2>" target="_blank" class="btn"><TMPL_VAR NAME=ENTRY_ENTRY_ID></a></td>
-					<td class="center-align"><TMPL_VAR NAME=ENTRY_NAME></td>
-					<td class="center-align"><TMPL_VAR NAME=ENTRY_ADDUCT></td>
-					<td class="center-align"><TMPL_VAR NAME=ENTRY_ADDUCT_MZ></td>
+					<td class="center-align"><TMPL_VAR NAME=ENTRY_FORMULA></td>
 					<td class="center-align"><TMPL_VAR NAME=ENTRY_CPD_MZ></td>
+					<td class="center-align"><TMPL_VAR NAME=ENTRY_ADDUCT></td>
+					<td class="center-align"><TMPL_VAR NAME=ENTRY_ADDUCT_TYPE></td>
+					<td class="center-align"><TMPL_VAR NAME=ENTRY_ADDUCT_MZ></td>
 					<td class="center-align"><TMPL_VAR NAME=ENTRY_DELTA></td>
 				</tr>
 				</TMPL_LOOP>
