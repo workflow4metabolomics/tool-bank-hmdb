@@ -6,6 +6,7 @@ use Exporter ;
 use Carp ;
 
 use LWP::Simple;
+use LWP::UserAgent;
 use URI::URL;
 use SOAP::Lite;
 use Encode;
@@ -57,6 +58,39 @@ sub new {
 }
 ### END of SUB
      
+
+=head2 METHOD extract_sub_mz_lists
+
+	## Description : extract a couples of sublist from a long mz list (more than $HMDB_LIMITS)
+	## Input : $HMDB_LIMITS, $masses
+	## Output : $sublists
+	## Usage : my ( $sublists ) = extract_sub_mz_lists( $HMDB_LIMITS, $masses ) ;
+	
+=cut
+## START of SUB
+sub extract_sub_mz_lists {
+	## Retrieve Values
+    my $self = shift ;
+    my ( $masses, $HMDB_LIMITS ) = @_ ;
+    
+    my ( @sublists, @sublist ) = ( (), () ) ;
+    my $nb_mz = 0 ;
+    my $nb_total_mzs = scalar(@{$masses}) ;
+    
+    for ( my $current_pos = 0 ; $current_pos < $nb_total_mzs ; $current_pos++ ) {
+    	
+    	if ( $nb_mz < $HMDB_LIMITS ) {
+    		if ( $masses->[$current_pos] ) { 	push (@sublist, $masses->[$current_pos]) ; $nb_mz++ ;	} # build sub list
+    	} 
+    	elsif ( $nb_mz == $HMDB_LIMITS ) {
+    		my @tmp = @sublist ; push (@sublists, \@tmp) ; @sublist = () ;	$nb_mz = 0 ;
+    		$current_pos-- ;
+    	}
+    	if ($current_pos == $nb_total_mzs-1) { 	my @tmp = @sublist ; push (@sublists, \@tmp) ; }
+	}
+    return(\@sublists) ;
+}
+## END of SUB
 
 =head2 METHOD prepare_multi_masses_query
 
@@ -121,7 +155,7 @@ sub get_matches_from_hmdb {
     my $page = undef ;
     
     if ( (defined $mass) and (defined $delta) and (defined $mode) ) {
-    	my $url = 'http://www.hmdb.ca/spectra/ms/search?utf8=TRUE&query_masses='.$mass.'&tolerance='.$delta.'&mode='.$mode.'&commit=Search' ;
+    	my $url = 'http://www.hmdb.ca/spectra/spectra/ms/search?utf8=TRUE&query_masses='.$mass.'&tolerance='.$delta.'&mode='.$mode.'&commit=Search' ;
     	
 #    	print $url."\n" ;
 	    
@@ -137,7 +171,94 @@ sub get_matches_from_hmdb {
 }
 ## END of SUB
 
+=head2 METHOD get_matches_from_hmdb_ua
 
+	## Description : permet de requeter via un user agent sur hmdb avec une masse, un delta de masse sur la banque de metabolites hmdb
+	## Input : $mass, $delta, $mode
+	## Output : $results
+	## Usage : my ( $results ) = get_matches_from_hmdb( $mass, $delta, $mode ) ;
+	
+=cut
+## START of SUB
+sub get_matches_from_hmdb_ua {
+	## Retrieve Values
+    my $self = shift ;
+    my ( $masses, $delta, $mode ) = @_ ;
+    
+    my @page = () ;
+
+	my $ua = new LWP::UserAgent;
+	$ua->agent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36");
+	 
+	my $req = HTTP::Request->new(
+	    POST => 'http://specdb.wishartlab.com/ms/search.csv');
+	
+	$req->content_type('application/x-www-form-urlencoded');
+	$req->content('utf8=TRUE&mode='.$mode.'&query_masses='.$masses.'&tolerance='.$delta.'&database=HMDB&commit=Download Results As CSV');
+	 
+	my $res = $ua->request($req);
+#	print $res->as_string;
+	@page = split ( /\n/, $res->decoded_content ) ;
+	
+	return (\@page) ;
+}
+## END of SUB
+
+
+
+=head2 METHOD parse_hmdb_csv_results
+
+	## Description : parse the csv results and get data
+	## Input : $csv
+	## Output : $results
+	## Usage : my ( $results ) = parse_hmdb_csv_results( $csv ) ;
+	
+=cut
+## START of SUB
+sub parse_hmdb_csv_results {
+	## Retrieve Values
+    my $self = shift ;
+    my ( $csv, $masses ) = @_ ;
+    
+    my $test = 0 ;
+    my ($query_mass,$compound_id,$formula,$compound_mass,$adduct,$adduct_type,$adduct_mass,$delta) = (0, undef, undef, undef, undef, undef, undef, undef) ;
+    
+    my %result_by_entry = () ;
+    my %features = () ;
+    
+    foreach my $line (@{$csv}) {
+    	
+    	if ($line !~ /query_mass,compound_id,formula,compound_mass,adduct,adduct_type,adduct_mass,delta/) {
+    		my @entry = split(/,/, $line) ;
+    		
+    		if ( !exists $result_by_entry{$entry[0]} ) { $result_by_entry{$entry[0]} = [] ; }
+    		
+    		$features{ENTRY_ENTRY_ID} = $entry[1] ;
+    		$features{ENTRY_FORMULA} = $entry[2] ;
+    		$features{ENTRY_CPD_MZ} = $entry[3] ;
+    		$features{ENTRY_ADDUCT} = $entry[4] ;
+    		$features{ENTRY_ADDUCT_TYPE} = $entry[5] ;
+    		$features{ENTRY_ADDUCT_MZ} = $entry[6] ;
+    		$features{ENTRY_DELTA} = $entry[7] ;
+    		
+    		my %temp = %features ;
+    		
+    		push (@{$result_by_entry{$entry[0]} }, \%temp) ;
+    	}
+    	else {
+    		next ;
+    	}
+    } ## end foreach
+    
+    ## manage per query_mzs (keep query masses order by array)
+    my @results = () ;
+    foreach (@{$masses}) {
+    	if ($result_by_entry{$_}) { push (@results, $result_by_entry{$_}) ; }
+    	else {push (@results, [] ) ;} ;
+    }
+    return(\@results) ;
+}
+## END of SUB
 
 =head2 METHOD parse_hmdb_page_results
 
@@ -217,7 +338,6 @@ sub parse_hmdb_page_results {
     return(\@results) ;
 }
 ## END of SUB
-
 
 =head2 METHOD set_html_tbody_object
 
@@ -344,10 +464,11 @@ sub add_entries_to_tbody_object {
 		    			ENTRY_COLOR => $tbody_object->[$index_page]{MASSES}[$index_mz]{MZ_COLOR},
 		   				ENTRY_ENTRY_ID => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_ID},
 		   				ENTRY_ENTRY_ID2 => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_ID},
-						ENTRY_NAME => $entries->[$index_mz_continous][$index_entry]{ENTRY_NAME},
-						ENTRY_ADDUCT => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT},
-						ENTRY_ADDUCT_MZ => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT_MZ},
+						ENTRY_FORMULA => $entries->[$index_mz_continous][$index_entry]{ENTRY_FORMULA},
 						ENTRY_CPD_MZ => $entries->[$index_mz_continous][$index_entry]{ENTRY_CPD_MZ},
+						ENTRY_ADDUCT => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT},
+						ENTRY_ADDUCT_TYPE => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT_TYPE},
+						ENTRY_ADDUCT_MZ => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT_MZ},
 						ENTRY_DELTA => $entries->[$index_mz_continous][$index_entry]{ENTRY_DELTA},   			
 		    		) ;
 		    		
@@ -452,14 +573,14 @@ sub set_lm_matrix_object {
 	    		push ( @anti_redondant, $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID} ) ;
 		    			    	
 		    	my $delta = $entries->[$index_mz][$index_entries]{ENTRY_DELTA} ;
-	    		my $name =  $entries->[$index_mz][$index_entries]{ENTRY_NAME} ;
+	    		my $formula =  $entries->[$index_mz][$index_entries]{ENTRY_FORMULA} ;
 	    		my $hmdb_id = $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID}  ;
 		    	
 		    	## METLIN data display model 
 		   		## entry1=VAR1::VAR2::VAR3::VAR4|entry2=VAR1::VAR2::VAR3::VAR4|...
 		   		# manage final pipe
-		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $delta.'::('.$name.')::'.$hmdb_id.'|' ; }
-		   		else { 						   			$cluster_col .= $delta.'::('.$name.')::'.$hmdb_id ; 	}
+		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $delta.'::('.$formula.')::'.$hmdb_id.'|' ; }
+		   		else { 						   			$cluster_col .= $delta.'::('.$formula.')::'.$hmdb_id ; 	}
 	    		
 	    	}
 	    	$check_rebond = 0 ; ## reinit double control
@@ -546,7 +667,7 @@ sub write_csv_one_mass {
     my ( $masses, $ids, $results, $file,  ) = @_ ;
     
     open(CSV, '>:utf8', "$file") or die "Cant' create the file $file\n" ;
-    print CSV "ID\tMASS_SUBMIT\tHMDB_ID\tCPD_NAME\tCPD_MW\tDELTA\n" ;
+    print CSV "ID\tMASS_SUBMIT\tHMDB_ID\tCPD_FORMULA\tCPD_MW\tDELTA\n" ;
     	
     my $i = 0 ;
     	
@@ -574,13 +695,13 @@ sub write_csv_one_mass {
 
 	    			print CSV "$id\t$mass\t$entry->{ENTRY_ENTRY_ID}\t" ;
 	    			## print cpd name
-	    			if ( $entry->{ENTRY_NAME} ) { 	print CSV "$entry->{ENTRY_NAME}\t" ; }
-	    			else { 							print CSV "N/A\t" ; }
+	    			if ( $entry->{ENTRY_FORMULA} ) { print CSV "$entry->{ENTRY_FORMULA}\t" ; }
+	    			else { 							 print CSV "N/A\t" ; }
 	    			## print cpd mw
 	    			if ( $entry->{ENTRY_CPD_MZ} ) { print CSV "$entry->{ENTRY_CPD_MZ}\t" ; }
 	    			else { 							print CSV "N/A\t" ; }
 	    			## print delta
-	    			if ( $entry->{ENTRY_DELTA} ) { print CSV "$entry->{ENTRY_DELTA}\n" ; }
+	    			if ( $entry->{ENTRY_DELTA} ) {  print CSV "$entry->{ENTRY_DELTA}\n" ; }
 	    			else { 							print CSV "N/A\n" ; }
 		    	}
 		    	$check_rebond = 0 ; ## reinit double control

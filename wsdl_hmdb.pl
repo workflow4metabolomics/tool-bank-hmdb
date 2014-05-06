@@ -31,10 +31,10 @@ my ( $masses_file, $col_id, $col_mass, $line_header ) = ( undef, undef, undef, u
 my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, undef ) ;
 
 ## FOR TEST : with masses_file
-#( $masses_file, $delta, $molecular_species, $col_id, $col_mass, $line_header ) = ( 'E:\\TESTs\\galaxy\\hmdb\\ex_masses_tabule.txt', 0.1, 'neutral', 1, 2, 1 ) ; 
+#( $masses_file, $delta, $molecular_species, $col_id, $col_mass, $line_header ) = ( 'E:\\TESTs\\galaxy\\hmdb\\ex_HR_set10entries_with_formula_and_header.txt', 0.05, 'neutral', 1, 2, 0 ) ;
 
 ## with a only one mass
-#( $mass, $delta, $molecular_species ) = ( 160.081 , 0.1, 'neutral', 1, 2, 1 ) ; 
+#( $mass, $delta, $molecular_species ) = ( 160.081 , 0.5, 'neutral' ) ; 
 
 #( $out_tab, $out_html ) = ('E:\\TESTs\\galaxy\\hmdb\\results_hmdb.txt', 'E:\\TESTs\\galaxy\\hmdb\\results_hmdb.html') ; ## 2d case
 
@@ -106,13 +106,28 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 	## prepare masses list and execute query
 	my $oHmdb = lib::hmdb::new() ;
 	my $hmdb_pages = undef ;
-	if (defined $mass) { $hmdb_pages = $oHmdb->get_matches_from_hmdb($mass, $delta, $molecular_species) ; }
-	if (defined $masses_file) {
-		my ($hmdb_masses, $nb_masses_to_submit) = $oHmdb->prepare_multi_masses_query($masses) ;
-		$hmdb_pages = $oHmdb->get_matches_from_hmdb($hmdb_masses, $delta, $molecular_species) ;
+	
+	## manage two modes
+	if (defined $mass) { # manual mode (don't manage more than 150 mz per job)
+		$hmdb_pages = $oHmdb->get_matches_from_hmdb_ua($mass, $delta, $molecular_species) ; 
+		$results = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $masses) ; ## hash format results
 	}
 	
-	$results = $oHmdb->parse_hmdb_page_results($hmdb_pages) ; ## hash format results
+	if (defined $masses_file) {
+		$results = [] ; # prepare arrays ref
+		my $submasses = $oHmdb->extract_sub_mz_lists($masses, $CONF->{HMDB_LIMITS} ) ;
+		
+		foreach my $mzs ( @{$submasses} ) {
+			
+			my $result = undef ;
+			my ( $hmdb_masses, $nb_masses_to_submit ) = $oHmdb->prepare_multi_masses_query($mzs) ;
+			$hmdb_pages = $oHmdb->get_matches_from_hmdb_ua($hmdb_masses, $delta, $molecular_species) ;
+			$result = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $mzs) ; ## hash format result
+			
+			$results = [ @$results, @$result ] ;
+		}
+	}
+	
 	## Uses N mz and theirs entries per page (see config file).
 	# how many pages you need with your input mz list?
 	$nb_pages_for_html_out = ceil( scalar(@{$masses} ) / $CONF->{HTML_ENTRIES_PER_PAGE} )  ;
@@ -134,7 +149,7 @@ if ( ( defined $out_html ) and ( defined $results ) ) {
 	
 } ## END IF
 else {
-	croak "Can't create a HTML output for HMDB : no result found or your output file is not defined\n" ;
+#	croak "Can't create a HTML output for HMDB : no result found or your output file is not defined\n" ;
 }
 
 if ( ( defined $out_tab ) and ( defined $results ) ) {
@@ -152,7 +167,7 @@ if ( ( defined $out_tab ) and ( defined $results ) ) {
 	}
 } ## END IF
 else {
-	croak "Can't create a tabular output for HMDB : no result found or your output file is not defined\n" ;
+#	croak "Can't create a tabular output for HMDB : no result found or your output file is not defined\n" ;
 }
 
 
