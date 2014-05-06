@@ -586,7 +586,7 @@ sub set_lm_matrix_object {
 	    	$check_rebond = 0 ; ## reinit double control
 	    	$index_entries++ ;
 	    } ## end foreach
-	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on LMDS' ; }
+	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on HMDB' ; }
     	push (@clusters, $cluster_col) ;
     	push (@hmdb_matrix, \@clusters) ;
     	$index_mz++ ;
