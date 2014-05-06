@@ -668,7 +668,7 @@ sub write_csv_one_mass {
     my ( $masses, $ids, $results, $file,  ) = @_ ;
     
     open(CSV, '>:utf8', "$file") or die "Cant' create the file $file\n" ;
-    print CSV "ID\tMASS_SUBMIT\tHMDB_ID\tCPD_NAME\tCPD_MW\tDELTA\n" ;
+    print CSV "ID\tMASS_SUBMIT\tHMDB_ID\tCPD_FORMULA\tCPD_MW\tDELTA\n" ;
     	
     my $i = 0 ;
     	
