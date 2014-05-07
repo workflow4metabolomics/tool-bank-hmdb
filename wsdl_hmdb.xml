@@ -74,22 +74,9 @@ Description
 Workflow position
 -----------------
 
-**Upstream tools**
 
-====== =========== ======= ============
-Name   output file format  parameter
-====== =========== ======= ============
-NA      NA          NA      NA
-====== =========== ======= ============
-
-
-**Downstream tools**
-
-====== =========== ======= =========
-Name   output file format  comments
-====== =========== ======= =========
-NA      NA           NA     NA
-====== =========== ======= =========
+.. image:: ./static/images/metabolomics/Workflow_position/hmdb.png
+        :width: 800
 
 
 -----------
