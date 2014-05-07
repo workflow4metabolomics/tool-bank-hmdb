@@ -166,92 +166,11 @@ wsdl_hmdb_TSV.tabular
 Working example
 ---------------
 
-Input files
-===========
 
-| **These input files can be used in the purview "URL/Text:" of the tool "Get Data/Upload File",**
-| **by checking the box "Convert spaces to tabs: YES"**
+.. class:: warningmark
 
-HMDB_masses.tabular
-	Model input file::
+The corresponding "Page" is coming soon.
 	
-		C19H18O11 422.0849114
-		H2O 18.0105647
-		C18H45N7O11 535.3181236
-
-		
-Parameters
-==========
-
-Use a file  -> **YES**
-
-Column of Id  -> **c1**
-
-Number of header lines  -> **0**
-
-Column of masses  -> **c2**
-
-Tolerance  -> **0.05**
-
-Molecular Species  -> **Neutral**
-
-
-
-Output files
-============
-
-wsdl_hmdb_View.html
-		
-MS search for 422.0849114 m/z (ID : C19H18O11 ) - Delta = abs( query mass - adduct mass ) 
-
-========= ===================== ======= ============== ================ =========
-Compound   Name                  Adduct Adduct MW (Da) Compound MW (Da) Delta
-========= ===================== ======= ============== ================ =========
-HMDB06789 Lactose 6-phosphate 	 N/A     422.082542     422.082542      0.0023694
-HMDB01124 Trehalose 6-phosphate  N/A     422.082542     422.082542      0.0023694
-========= ===================== ======= ============== ================ =========
-
-MS search for 18.0105647 m/z (ID : H2O ) - Delta = abs( query mass - adduct mass ) 
-
-========= ========= ======= ============== ================ =========
-Compound   Name     Adduct  Adduct MW (Da) Compound MW (Da) Delta
-========= ========= ======= ============== ================ =========
-HMDB02111  Water     N/A    18.010565       18.010565       0.0000003
-HMDB41827  Ammonium  N/A    18.034374       18.034374       0.0238093
-========= ========= ======= ============== ================ =========
-
-MS search for 535.3181236 m/z (ID : C18H45N7O11 ) - Delta = abs( query mass - adduct mass ) 
-
-========= ===================== ======= ============== ================ =========
-Compound   Name                  Adduct Adduct MW (Da) Compound MW (Da) Delta
-========= ===================== ======= ============== ================ =========
-HMDB11491 LysoPE(0:0/22:1(13Z))  N/A     535.36379      535.36379       0.0456664
-HMDB11521 LysoPE(22:1(13Z)/0:0)  N/A     535.36379      535.36379       0.0456664
-========= ===================== ======= ============== ================ =========
-
-
-wsdl_hmdb_TSV.tabular::
-
-	ID	MASS_SUBMIT	HMDB_ID	CPD_NAME	CPD_MW	DELTA
-	C19H18O11	422.0849114	HMDB06789	Lactose 6-phosphate	422.082542	0.0023694
-	C19H18O11	422.0849114	HMDB01124	Trehalose 6-phosphate	422.082542	0.0023694
-	C19H18O11	422.0849114	HMDB02111	Water	18.010565	0.0000003
-	C19H18O11	422.0849114	HMDB41827	Ammonium	18.034374	0.0238093
-	C19H18O11	422.0849114	HMDB11491	LysoPE(0:0/22:1(13Z))	535.36379	0.0456664
-	C19H18O11	422.0849114	HMDB11521	LysoPE(22:1(13Z)/0:0)	535.36379	0.0456664
-	H2O	18.0105647	HMDB06789	Lactose 6-phosphate	422.082542	0.0023694
-	H2O	18.0105647	HMDB01124	Trehalose 6-phosphate	422.082542	0.0023694
-	H2O	18.0105647	HMDB02111	Water	18.010565	0.0000003
-	H2O	18.0105647	HMDB41827	Ammonium	18.034374	0.0238093
-	H2O	18.0105647	HMDB11491	LysoPE(0:0/22:1(13Z))	535.36379	0.0456664
-	H2O	18.0105647	HMDB11521	LysoPE(22:1(13Z)/0:0)	535.36379	0.0456664
-	C18H45N7O11	535.3181236	HMDB06789	Lactose 6-phosphate	422.082542	0.0023694
-	C18H45N7O11	535.3181236	HMDB01124	Trehalose 6-phosphate	422.082542	0.0023694
-	C18H45N7O11	535.3181236	HMDB02111	Water	18.010565	0.0000003
-	C18H45N7O11	535.3181236	HMDB41827	Ammonium	18.034374	0.0238093
-	C18H45N7O11	535.3181236	HMDB11491	LysoPE(0:0/22:1(13Z))	535.36379	0.0456664
-	C18H45N7O11	535.3181236	HMDB11521	LysoPE(22:1(13Z)/0:0)	535.36379	0.0456664
-
 
 	</help>
 </tool>
