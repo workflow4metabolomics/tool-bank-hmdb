@@ -29,7 +29,7 @@
       </when>
     </conditional>
     
-    <param name="delta" label="Molecular Weight Tolerance +/- " type="float" value="0.05" size="10" help="(Da)"/>
+    <param name="delta" label="Molecular Weight Tolerance +/- " type="float" value="0.05" min="0.0000000000000001" max="10" size="10" help="Default value is 0.05 for HMDB (Da)"/>
     <param name="mode" label="Molecular Species " type="select" display="radio" help="">
       <option value="positive">Positif Mode</option>
       <option value="negative">Negatif Mode</option>
