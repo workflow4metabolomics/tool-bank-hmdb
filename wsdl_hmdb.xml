@@ -1,4 +1,4 @@
-<tool id="wsdl_hmdb" name="HMDB masses" version="1.0.0">
+<tool id="wsdl_hmdb" name="HMDB MS search" version="2014-05-07">
   <description>
         search on HMDB by file selection
   </description>
