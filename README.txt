@@ -1,5 +1,5 @@
 ## ****** HMDB environnemnt : ****** ##
-# version oct 2013 M Landi / F Giacomoni
+# version 2014-05-07 M Landi / F Giacomoni
 
 ## --- PERL compilator / libraries : --- ##
 $ perl -v

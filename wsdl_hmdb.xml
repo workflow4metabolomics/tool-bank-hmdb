@@ -1,4 +1,4 @@
-<tool id="wsdl_hmdb" name="HMDB masses" version="1.0.0">
+<tool id="wsdl_hmdb" name="HMDB MS search" version="2014-05-07">
   <description>
         search on HMDB by file selection
   </description>
@@ -10,7 +10,7 @@
             -mass "${input_type.mass}"
         #end if
         -delta "$delta" -mode "$mode"
-        -output "$output_csv" -view "$output_html"
+        -output "$variableMetadata" -view "$HmdbResView"
   </command>
   <inputs>
     <conditional name="input_type">
@@ -29,7 +29,7 @@
       </when>
     </conditional>
     
-    <param name="delta" label="Molecular Weight Tolerance +/- " type="float" value="0.05" size="10" help="(Da)"/>
+    <param name="delta" label="Molecular Weight Tolerance +/- " type="float" value="0.05" min="0.0000000000000001" max="10" size="10" help="Default value is 0.05 for HMDB (Da)"/>
     <param name="mode" label="Molecular Species " type="select" display="radio" help="">
       <option value="positive">Positif Mode</option>
       <option value="negative">Negatif Mode</option>
@@ -38,8 +38,8 @@
   </inputs>
   
   <outputs>
-    <data name="output_csv" format="tabular" label="${tool.id}_TSV"/>
-    <data name="output_html" format="html" label="${tool.id}_View"/>
+    <data name="variableMetadata" format="tabular" label="${tool.name}_TSV"/>
+    <data name="HmdbResView" format="html" label="${tool.name}_VIEW"/>
   </outputs>
 
   <help>
@@ -74,22 +74,9 @@ Description
 Workflow position
 -----------------
 
-**Upstream tools**
 
-====== =========== ======= ============
-Name   output file format  parameter
-====== =========== ======= ============
-NA      NA          NA      NA
-====== =========== ======= ============
-
-
-**Downstream tools**
-
-====== =========== ======= =========
-Name   output file format  comments
-====== =========== ======= =========
-NA      NA           NA     NA
-====== =========== ======= =========
+.. image:: ./static/images/metabolomics/Workflow_position/hmdb.png
+        :width: 800
 
 
 -----------
@@ -100,46 +87,53 @@ Input files
 +-------------------------+-----------+
 | Parameter : num + label |  Format   |
 +=========================+===========+
-| 1 : File of masses      |  tabular  |
+| 1 : variableMetadata    |  tabular  |
 +-------------------------+-----------+
 
-Constraints files : 
-	* necessary columns : Id *and* Masses
-	* you can choose to manually enter the masses in parameter : **mass to submit**
+File of masses must have at least the 2 following column : 
+	* Id : column to identify masses in the csv/tsv input file
+	* Masses : column with all the masses in the csv/tsv input file
 
 ----------
 Parameters
 ----------
 
-Use a file
+Would you use a file
 	| Choose whether the masses are in a file or entered manually
 	| YES (default) : parameters **File of masses ; Column of Id ; Number of header ; Column of masses** are visible
-	| NO : parameter **mass to submit** is visible
+	| NO : parameter **Mass of the molecule** is visible
+	|
 
 
-If 'YES' :
+If 'use file'='YES'
 
 Column of Id
-	Column where the identifiers are
-	
+	| Specify the column number for the id in the csv/tsv input file
+	|
+
 Number of header lines
-	Number of lines not containing values
+	| Number of lines not containing values 
+	|
 
 Column of masses
-	Column where the masses are
+	| Specify the column number for the mass in the csv/tsv input file
+	|
 
 
-If 'NO' :
+If 'use file'='NO'
 
-mass to submit
+Mass of the molecule
+	| Specify a list of mass to request
 	| one or more mass(es) entered manually
-	| For a masses list, writes : m1 m2 m3 / You can also separate yours values with dot (.) or coma (,) 
-
+	| For a masses list, writes : m1,m2,m3
+	| You must separate yours values with coma (,)
+	| dot (.) is for float number
+	|
 
 In all cases :
 
 Tolerance
-	| Tolerance of the gap in the mass in Da
+	| Specify a delta (Da) to apply on mass - This value is a float, between 0.0000000000000001 and 10.
 
 Molecular Species
 	| Type of ionization of the molecule : *positif, negatif, neutral*
@@ -149,109 +143,23 @@ Molecular Species
 Output files
 ------------
 
-wsdl_hmdb_View.html
-	| HTML
-	| To visualize the results in tables, one by mass
-
-wsdl_hmdb_TSV.tabular
-	| tabular
-	| ensemble of masses results
-	| column title :
-	| ID	MASS_SUBMIT	HMDB_ID	CPD_NAME	CPD_MW	DELTA
-
+Two types of files
+	| wsdl_hmdb_VIEW.HTML : for viewing result via HTML.
+	| wsdl_hmdb_TSV.tabular : for linking with others modules.
+	| an excel-like output will be available. 
 	
 ---------------------------------------------------
+
 
 ---------------
 Working example
 ---------------
 
-Input files
-===========
 
-| **These input files can be used in the purview "URL/Text:" of the tool "Get Data/Upload File",**
-| **by checking the box "Convert spaces to tabs: YES"**
+.. class:: warningmark
 
-HMDB_masses.tabular
-	Model input file::
+The corresponding "Page" is coming soon.
 	
-		C19H18O11 422.0849114
-		H2O 18.0105647
-		C18H45N7O11 535.3181236
-
-		
-Parameters
-==========
-
-Use a file  -> **YES**
-
-Column of Id  -> **c1**
-
-Number of header lines  -> **0**
-
-Column of masses  -> **c2**
-
-Tolerance  -> **0.05**
-
-Molecular Species  -> **Neutral**
-
-
-
-Output files
-============
-
-wsdl_hmdb_View.html
-		
-MS search for 422.0849114 m/z (ID : C19H18O11 ) - Delta = abs( query mass - adduct mass ) 
-
-========= ===================== ======= ============== ================ =========
-Compound   Name                  Adduct Adduct MW (Da) Compound MW (Da) Delta
-========= ===================== ======= ============== ================ =========
-HMDB06789 Lactose 6-phosphate 	 N/A     422.082542     422.082542      0.0023694
-HMDB01124 Trehalose 6-phosphate  N/A     422.082542     422.082542      0.0023694
-========= ===================== ======= ============== ================ =========
-
-MS search for 18.0105647 m/z (ID : H2O ) - Delta = abs( query mass - adduct mass ) 
-
-========= ========= ======= ============== ================ =========
-Compound   Name     Adduct  Adduct MW (Da) Compound MW (Da) Delta
-========= ========= ======= ============== ================ =========
-HMDB02111  Water     N/A    18.010565       18.010565       0.0000003
-HMDB41827  Ammonium  N/A    18.034374       18.034374       0.0238093
-========= ========= ======= ============== ================ =========
-
-MS search for 535.3181236 m/z (ID : C18H45N7O11 ) - Delta = abs( query mass - adduct mass ) 
-
-========= ===================== ======= ============== ================ =========
-Compound   Name                  Adduct Adduct MW (Da) Compound MW (Da) Delta
-========= ===================== ======= ============== ================ =========
-HMDB11491 LysoPE(0:0/22:1(13Z))  N/A     535.36379      535.36379       0.0456664
-HMDB11521 LysoPE(22:1(13Z)/0:0)  N/A     535.36379      535.36379       0.0456664
-========= ===================== ======= ============== ================ =========
-
-
-wsdl_hmdb_TSV.tabular::
-
-	ID	MASS_SUBMIT	HMDB_ID	CPD_NAME	CPD_MW	DELTA
-	C19H18O11	422.0849114	HMDB06789	Lactose 6-phosphate	422.082542	0.0023694
-	C19H18O11	422.0849114	HMDB01124	Trehalose 6-phosphate	422.082542	0.0023694
-	C19H18O11	422.0849114	HMDB02111	Water	18.010565	0.0000003
-	C19H18O11	422.0849114	HMDB41827	Ammonium	18.034374	0.0238093
-	C19H18O11	422.0849114	HMDB11491	LysoPE(0:0/22:1(13Z))	535.36379	0.0456664
-	C19H18O11	422.0849114	HMDB11521	LysoPE(22:1(13Z)/0:0)	535.36379	0.0456664
-	H2O	18.0105647	HMDB06789	Lactose 6-phosphate	422.082542	0.0023694
-	H2O	18.0105647	HMDB01124	Trehalose 6-phosphate	422.082542	0.0023694
-	H2O	18.0105647	HMDB02111	Water	18.010565	0.0000003
-	H2O	18.0105647	HMDB41827	Ammonium	18.034374	0.0238093
-	H2O	18.0105647	HMDB11491	LysoPE(0:0/22:1(13Z))	535.36379	0.0456664
-	H2O	18.0105647	HMDB11521	LysoPE(22:1(13Z)/0:0)	535.36379	0.0456664
-	C18H45N7O11	535.3181236	HMDB06789	Lactose 6-phosphate	422.082542	0.0023694
-	C18H45N7O11	535.3181236	HMDB01124	Trehalose 6-phosphate	422.082542	0.0023694
-	C18H45N7O11	535.3181236	HMDB02111	Water	18.010565	0.0000003
-	C18H45N7O11	535.3181236	HMDB41827	Ammonium	18.034374	0.0238093
-	C18H45N7O11	535.3181236	HMDB11491	LysoPE(0:0/22:1(13Z))	535.36379	0.0456664
-	C18H45N7O11	535.3181236	HMDB11521	LysoPE(22:1(13Z)/0:0)	535.36379	0.0456664
-
 
 	</help>
 </tool>
