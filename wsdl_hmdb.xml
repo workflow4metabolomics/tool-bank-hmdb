@@ -100,46 +100,53 @@ Input files
 +-------------------------+-----------+
 | Parameter : num + label |  Format   |
 +=========================+===========+
-| 1 : File of masses      |  tabular  |
+| 1 : variableMetadata    |  tabular  |
 +-------------------------+-----------+
 
-Constraints files : 
-	* necessary columns : Id *and* Masses
-	* you can choose to manually enter the masses in parameter : **mass to submit**
+File of masses must have at least the 2 following column : 
+	* Id : column to identify masses in the csv/tsv input file
+	* Masses : column with all the masses in the csv/tsv input file
 
 ----------
 Parameters
 ----------
 
-Use a file
+Would you use a file
 	| Choose whether the masses are in a file or entered manually
 	| YES (default) : parameters **File of masses ; Column of Id ; Number of header ; Column of masses** are visible
-	| NO : parameter **mass to submit** is visible
+	| NO : parameter **Mass of the molecule** is visible
+	|
 
 
-If 'YES' :
+If 'use file'='YES'
 
 Column of Id
-	Column where the identifiers are
-	
+	| Specify the column number for the id in the csv/tsv input file
+	|
+
 Number of header lines
-	Number of lines not containing values
+	| Number of lines not containing values 
+	|
 
 Column of masses
-	Column where the masses are
+	| Specify the column number for the mass in the csv/tsv input file
+	|
 
 
-If 'NO' :
+If 'use file'='NO'
 
-mass to submit
+Mass of the molecule
+	| Specify a list of mass to request
 	| one or more mass(es) entered manually
-	| For a masses list, writes : m1 m2 m3 / You can also separate yours values with dot (.) or coma (,) 
-
+	| For a masses list, writes : m1,m2,m3
+	| You must separate yours values with coma (,)
+	| dot (.) is for float number
+	|
 
 In all cases :
 
 Tolerance
-	| Tolerance of the gap in the mass in Da
+	| Specify a delta (Da) to apply on mass - This value is a float, between 0.0000000000000001 and 10.
 
 Molecular Species
 	| Type of ionization of the molecule : *positif, negatif, neutral*
@@ -149,18 +156,13 @@ Molecular Species
 Output files
 ------------
 
-wsdl_hmdb_View.html
-	| HTML
-	| To visualize the results in tables, one by mass
-
-wsdl_hmdb_TSV.tabular
-	| tabular
-	| ensemble of masses results
-	| column title :
-	| ID	MASS_SUBMIT	HMDB_ID	CPD_NAME	CPD_MW	DELTA
-
+Two types of files
+	| wsdl_hmdb_VIEW.HTML : for viewing result via HTML.
+	| wsdl_hmdb_TSV.tabular : for linking with others modules.
+	| an excel-like output will be available. 
 	
 ---------------------------------------------------
+
 
 ---------------
 Working example
