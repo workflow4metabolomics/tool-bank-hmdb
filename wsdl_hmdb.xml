@@ -10,7 +10,7 @@
             -mass "${input_type.mass}"
         #end if
         -delta "$delta" -mode "$mode"
-        -output "$output_csv" -view "$output_html"
+        -output "$variableMetadata" -view "$HmdbResView"
   </command>
   <inputs>
     <conditional name="input_type">
@@ -38,8 +38,8 @@
   </inputs>
   
   <outputs>
-    <data name="output_csv" format="tabular" label="${tool.id}_TSV"/>
-    <data name="output_html" format="html" label="${tool.id}_View"/>
+    <data name="variableMetadata" format="tabular" label="${tool.name}_TSV"/>
+    <data name="HmdbResView" format="html" label="${tool.name}_VIEW"/>
   </outputs>
 
   <help>
