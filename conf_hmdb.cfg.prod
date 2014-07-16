@@ -8,4 +8,4 @@
 #
 ## HTML OUTPUT : 
 HTML_ENTRIES_PER_PAGE=4
-HTML_TEMPLATE=/galaxy/dist/galaxy-pfem/tools/metabolomics/identification/banks_queries/hmdb/hmdb.tmpl
+HTML_TEMPLATE=/galaxy/dist/galaxy-pfem/tools/metabolomics/annotation/banks_queries/hmdb/hmdb.tmpl
