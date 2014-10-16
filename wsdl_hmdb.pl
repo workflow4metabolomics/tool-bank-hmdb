@@ -15,14 +15,13 @@ use Text::CSV ;
 use POSIX ;
 use FindBin ; ## Permet de localisez le repertoire du script perl d'origine
 
-## PFEM Perl Modules
-use conf::conf  qw( :ALL ) ;
-use formats::csv  qw( :ALL ) ;
-
-## Specific Modules
+## Specific Modules (Home made...)
 use lib $FindBin::Bin ;
 my $binPath = $FindBin::Bin ;
 use lib::hmdb qw( :ALL ) ;
+## PFEM Perl Modules
+use lib::conf  qw( :ALL ) ;
+use lib::csv  qw( :ALL ) ;
 
 ## Initialized values
 my ( $help ) = undef ;
@@ -42,16 +41,16 @@ my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, 
 #                                Manage EXCEPTIONS
 #=============================================================================
 
-&GetOptions ( 	"h"     		=> \$help,       # HELP
-				"masses:s"		=> \$masses_file, ## option : path to the input
-				"colid:i"		=> \$col_id, ## Column id for retrieve formula/masses list in tabular file
-				"colfactor:i"	=> \$col_mass, ## Column id for retrieve formula list in tabular file
-				"lineheader:i"	=> \$line_header, ## header presence in tabular file
-				"mass:s"		=> \$mass, ## option : one masse
+&GetOptions ( 	"h"				=> \$help,				# HELP
+				"masses:s"		=> \$masses_file,		## option : path to the input
+				"colid:i"		=> \$col_id,			## Column id for retrieve formula/masses list in tabular file
+				"colfactor:i"	=> \$col_mass,			## Column id for retrieve formula list in tabular file
+				"lineheader:i"	=> \$line_header,		## header presence in tabular file
+				"mass:s"		=> \$mass,				## option : one masse
 				"delta:f"		=> \$delta,
-				"mode:s"		=> \$molecular_species, ## Molecular species (positive/negative/neutral) 
-				"output|o:s"	=> \$out_tab, ## option : path to the ouput (tabular : input+results )
-				"view|v:s"		=> \$out_html, ## option : path to the results view (output2)
+				"mode:s"		=> \$molecular_species,	## Molecular species (positive/negative/neutral) 
+				"output|o:s"	=> \$out_tab,			## option : path to the ouput (tabular : input+results )
+				"view|v:s"		=> \$out_html,			## option : path to the results view (output2)
             ) ;
 
 #=============================================================================
@@ -67,7 +66,7 @@ $help and &help ;
 ## -------------- Conf file ------------------------ :
 my ( $CONF ) = ( undef ) ;
 foreach my $conf ( <$binPath/*.cfg> ) {
-	my $oConf = conf::conf::new() ;
+	my $oConf = lib::conf::new() ;
 	$CONF = $oConf->as_conf($conf) ;
 }
 
@@ -87,13 +86,13 @@ if ( ( defined $mass ) and ( $mass ne "" ) and ( $mass > 0 ) ) {
 ## manage csv file containing list of masses
 elsif ( ( defined $masses_file ) and ( $masses_file ne "" ) and ( -e $masses_file ) ) {
 	## parse all csv for later : output csv build
-	my $ocsv_input  = formats::csv->new() ;
+	my $ocsv_input  = lib::csv->new() ;
 	my $complete_csv = $ocsv_input->get_csv_object( "\t" ) ;
 	$complete_rows = $ocsv_input->parse_csv_object($complete_csv, \$masses_file) ;
 	
 	## parse csv ids and masses
 	my $is_header = undef ;
-	my $ocsv = formats::csv->new() ;
+	my $ocsv = lib::csv->new() ;
 	my $csv = $ocsv->get_csv_object( "\t" ) ;
 	if ( ( defined $line_header ) and ( $line_header > 0 ) ) { $is_header = 'yes' ;	}
 	$masses = $ocsv->get_value_from_csv( $csv, $masses_file, $col_mass, $is_header ) ; ## retrieve mz values on csv
