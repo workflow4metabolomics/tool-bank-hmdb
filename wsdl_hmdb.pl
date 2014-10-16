@@ -78,10 +78,12 @@ my $search_condition = "Search params : Molecular specie = $molecular_species / 
 ## --------------- retrieve input data -------------- :
 
 ## manage only one mass
-if ( ( defined $mass ) and ( $mass ne "" ) and ( $mass > 0 ) ) {
-	$ids = ['mass_01'] ;
-	$masses = [$mass] ;
-	
+if ( ( defined $mass ) and ( $mass ne "" ) ) {
+	my @masses = split(" ", $mass);
+	$masses = \@masses ;
+	for (my $i=1 ; $i<=$#masses+1 ; $i++){
+		push (@$ids,"mass_0".$i );
+	}
 } ## END IF
 ## manage csv file containing list of masses
 elsif ( ( defined $masses_file ) and ( $masses_file ne "" ) and ( -e $masses_file ) ) {
@@ -107,12 +109,12 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 	my $hmdb_pages = undef ;
 	
 	## manage two modes
-	if (defined $mass) { # manual mode (don't manage more than 150 mz per job)
-		$hmdb_pages = $oHmdb->get_matches_from_hmdb_ua($mass, $delta, $molecular_species) ; 
-		$results = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $masses) ; ## hash format results
-	}
+	#if (defined $mass) { # manual mode (don't manage more than 150 mz per job)
+	#	$hmdb_pages = $oHmdb->get_matches_from_hmdb_ua($mass, $delta, $molecular_species) ; 
+	#	$results = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $masses) ; ## hash format results
+	#}
 	
-	if (defined $masses_file) {
+	#if (defined $masses_file) {
 		$results = [] ; # prepare arrays ref
 		my $submasses = $oHmdb->extract_sub_mz_lists($masses, $CONF->{HMDB_LIMITS} ) ;
 		
@@ -125,7 +127,7 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 			
 			$results = [ @$results, @$result ] ;
 		}
-	}
+	#}
 	
 	## Uses N mz and theirs entries per page (see config file).
 	# how many pages you need with your input mz list?

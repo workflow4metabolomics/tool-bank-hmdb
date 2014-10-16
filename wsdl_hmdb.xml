@@ -1,4 +1,4 @@
-<tool id="wsdl_hmdb" name="HMDB MS search" version="2014-05-07">
+<tool id="wsdl_hmdb" name="HMDB MS search" version="2014-12-11">
   <description>
         search on HMDB by file selection
   </description>
@@ -25,7 +25,7 @@
 	    <param name="colfactor" label="Column of masses " type="data_column" data_ref="masses" accept_default="true" />
       </when>
       <when value="NO">
-        <param name="mass" label="mass to submit " type="text" size="20" help="You should use dot (.) like decimal separator" />
+        <param name="mass" label="mass to submit " type="text" size="20" help="For a masses list, writes : m1 m2 m3. Your values ​​must be separated by spaces. You should use dot (.) like decimal separator" />
       </when>
     </conditional>
     
