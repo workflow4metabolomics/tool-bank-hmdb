@@ -8,7 +8,7 @@
             -masses "${input_type.masses}" -colid "${input_type.colid}"
             -header_choice "${input_type.header.header_choice}"
             #if str($input_type.header.header_choice) == "YES":
-                -lineheader "${$input_type.header.lineheader}"
+                -nblineheader "${$input_type.header.nbHeader}"
             #end if
             -colfactor "${input_type.colfactor}"
         #else:
@@ -28,8 +28,8 @@
         <param name="colid" label="Column of Id " type="data_column" data_ref="masses" accept_default="true" />
 	    <conditional name="header">
           <param name="header_choice" type="select" label="Do you have a header " help="if 'YES' is selected then enter your number of header lines">
-            <option value="YES">YES</option>
-            <option value="NO" selected="true">NO</option>
+            <option value="NO">NO</option>
+            <option value="YES" selected="true">YES</option>
           </param>
           <when value="YES">
             <param name="nbHeader" label="Number of header lines " type="integer" value="1" min="1" size="10" help="number of lines not containing masses"/>

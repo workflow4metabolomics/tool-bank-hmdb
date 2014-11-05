@@ -26,11 +26,11 @@ use lib::csv  qw( :ALL ) ;
 ## Initialized values
 my ( $help ) = undef ;
 my ( $mass ) = undef ;
-my ( $masses_file, $col_id, $col_mass, $header_choice, $line_header ) = ( undef, undef, undef, undef, undef ) ;
+my ( $masses_file, $col_id, $col_mass, $header_choice, $nbline_header ) = ( undef, undef, undef, undef, undef ) ;
 my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, undef ) ;
 
 ## FOR TEST : with masses_file
-#( $masses_file, $delta, $molecular_species, $col_id, $col_mass, $line_header ) = ( 'E:\\TESTs\\galaxy\\hmdb\\ex_HR_set10entries_with_formula_and_header.txt', 0.05, 'neutral', 1, 2, 0 ) ;
+#( $masses_file, $delta, $molecular_species, $col_id, $col_mass, $nbline_header ) = ( 'E:\\TESTs\\galaxy\\hmdb\\ex_HR_set10entries_with_formula_and_header.txt', 0.05, 'neutral', 1, 2, 0 ) ;
 
 ## with a only one mass
 #( $mass, $delta, $molecular_species ) = ( 160.081 , 0.5, 'neutral' ) ; 
@@ -46,7 +46,7 @@ my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, 
 				"colid:i"			=> \$col_id,			## Column id for retrieve formula/masses list in tabular file
 				"colfactor:i"		=> \$col_mass,			## Column id for retrieve formula list in tabular file
 				"header_choice:s"	=> \$header_choice,		## Presence or not of header in tabular file
-				"lineheader:i"		=> \$line_header,		## numbre of header line present in file
+				"nblineheader:i"		=> \$nbline_header,		## numbre of header line present in file
 				"mass:s"			=> \$mass,				## option : one masse
 				"delta:f"			=> \$delta,
 				"mode:s"			=> \$molecular_species,	## Molecular species (positive/negative/neutral) 
@@ -97,7 +97,7 @@ elsif ( ( defined $masses_file ) and ( $masses_file ne "" ) and ( -e $masses_fil
 	my $is_header = undef ;
 	my $ocsv = lib::csv->new() ;
 	my $csv = $ocsv->get_csv_object( "\t" ) ;
-	if ( ( defined $line_header ) and ( $line_header > 0 ) ) { $is_header = 'yes' ;	}
+	if ( ( defined $nbline_header ) and ( $nbline_header > 0 ) ) { $is_header = 'yes' ;	}
 	$masses = $ocsv->get_value_from_csv( $csv, $masses_file, $col_mass, $is_header ) ; ## retrieve mz values on csv
 	$ids = $ocsv->get_value_from_csv( $csv, $masses_file, $col_id, $is_header ) ; ## retrieve ids values on csv
 }
@@ -159,8 +159,8 @@ if ( ( defined $out_tab ) and ( defined $results ) ) {
 	my $ocsv = lib::hmdb::new() ;
 	if (defined $masses_file) {
 		my $lm_matrix = undef ;
-		if ( ( defined $line_header ) and ( $line_header == 1 ) ) { $lm_matrix = $ocsv->set_lm_matrix_object('hmdb', $masses, $results ) ; }
-		elsif ( ( defined $line_header ) and ( $line_header == 0 ) ) { $lm_matrix = $ocsv->set_lm_matrix_object(undef, $masses, $results ) ; }
+		if ( ( defined $nbline_header ) and ( $nbline_header == 1 ) ) { $lm_matrix = $ocsv->set_lm_matrix_object('hmdb', $masses, $results ) ; }
+		elsif ( ( defined $nbline_header ) and ( $nbline_header == 0 ) ) { $lm_matrix = $ocsv->set_lm_matrix_object(undef, $masses, $results ) ; }
 		$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix) ;
 		$ocsv->write_csv_skel(\$out_tab, $lm_matrix) ;
 	}
