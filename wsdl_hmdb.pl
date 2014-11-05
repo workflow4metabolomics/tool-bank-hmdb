@@ -26,7 +26,7 @@ use lib::csv  qw( :ALL ) ;
 ## Initialized values
 my ( $help ) = undef ;
 my ( $mass ) = undef ;
-my ( $masses_file, $col_id, $col_mass, $line_header ) = ( undef, undef, undef, undef ) ;
+my ( $masses_file, $col_id, $col_mass, $header_choice, $line_header ) = ( undef, undef, undef, undef, undef ) ;
 my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, undef ) ;
 
 ## FOR TEST : with masses_file
@@ -41,16 +41,17 @@ my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, 
 #                                Manage EXCEPTIONS
 #=============================================================================
 
-&GetOptions ( 	"h"				=> \$help,				# HELP
-				"masses:s"		=> \$masses_file,		## option : path to the input
-				"colid:i"		=> \$col_id,			## Column id for retrieve formula/masses list in tabular file
-				"colfactor:i"	=> \$col_mass,			## Column id for retrieve formula list in tabular file
-				"lineheader:i"	=> \$line_header,		## header presence in tabular file
-				"mass:s"		=> \$mass,				## option : one masse
-				"delta:f"		=> \$delta,
-				"mode:s"		=> \$molecular_species,	## Molecular species (positive/negative/neutral) 
-				"output|o:s"	=> \$out_tab,			## option : path to the ouput (tabular : input+results )
-				"view|v:s"		=> \$out_html,			## option : path to the results view (output2)
+&GetOptions ( 	"h"					=> \$help,				# HELP
+				"masses:s"			=> \$masses_file,		## option : path to the input
+				"colid:i"			=> \$col_id,			## Column id for retrieve formula/masses list in tabular file
+				"colfactor:i"		=> \$col_mass,			## Column id for retrieve formula list in tabular file
+				"header_choice:s"	=> \$header_choice,		## Presence or not of header in tabular file
+				"lineheader:i"		=> \$line_header,		## numbre of header line present in file
+				"mass:s"			=> \$mass,				## option : one masse
+				"delta:f"			=> \$delta,
+				"mode:s"			=> \$molecular_species,	## Molecular species (positive/negative/neutral) 
+				"output|o:s"		=> \$out_tab,			## option : path to the ouput (tabular : input+results )
+				"view|v:s"			=> \$out_html,			## option : path to the results view (output2)
             ) ;
 
 #=============================================================================
