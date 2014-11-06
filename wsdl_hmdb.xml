@@ -5,12 +5,12 @@
   <command interpreter="perl">
         wsdl_hmdb.pl
         #if str($input_type.choice) == "YES":
-            -masses "${input_type.masses}" -colid "${input_type.colid}"
+            -masses "${input_type.masses}"
             -header_choice "${input_type.header.header_choice}"
             #if str($input_type.header.header_choice) == "YES":
                 -nblineheader "${$input_type.header.nbHeader}"
             #end if
-            -colfactor "${input_type.colfactor}"
+            -colid "${input_type.colid}" -colfactor "${input_type.colfactor}"
         #else:
             -mass "${input_type.mass}"
         #end if
@@ -25,8 +25,7 @@
       </param>
       <when value="YES">
         <param name="masses" label="File of masses " format="tabular" type="data" help="Please note : HMDB allows maximum 150 query masses per request" />
-        <param name="colid" label="Column of Id " type="data_column" data_ref="masses" accept_default="true" />
-	    <conditional name="header">
+        <conditional name="header">
           <param name="header_choice" type="select" label="Do you have a header " help="if 'YES' is selected then enter your number of header lines">
             <option value="no">NO</option>
             <option value="yes" selected="true">YES</option>
@@ -35,6 +34,7 @@
             <param name="nbHeader" label="Number of header lines " type="integer" value="1" min="1" size="10" help="number of lines not containing masses"/>
           </when>
         </conditional>
+	    <param name="colid" label="Column of Id " type="data_column" data_ref="masses" accept_default="true" />
 	    <param name="colfactor" label="Column of masses " type="data_column" data_ref="masses" accept_default="true" />
       </when>
       <when value="NO">

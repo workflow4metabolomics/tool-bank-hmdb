@@ -32,11 +32,11 @@ my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, 
 ## FOR TEST :
 ## with masses_file
 ## whith 0 header line
-#( $masses_file, $col_id, $col_mass, $header_choice, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_without_header.tabular', 1, 2, 'no', 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
+#( $masses_file, $header_choice, $col_id, $col_mass, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_without_header.tabular', 'no', 1, 2, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
 ## whith 1 header line
-#( $masses_file, $col_id, $col_mass, $header_choice, $nbline_header, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_with_header.tabular', 1, 2, 'yes', 1, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
+#( $masses_file, $header_choice, $nbline_header, $col_id, $col_mass, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_with_header.tabular', 'yes', 1, 1, 2, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
 ## whith 2 header line
-#( $masses_file, $col_id, $col_mass, $header_choice, $nbline_header, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_with_2header.tabular', 1, 2, 'yes', 2, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
+#( $masses_file, $header_choice, $nbline_header, $col_id, $col_mass, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_with_2header.tabular', 'yes', 2, 1, 2, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
 
 ## with a only one mass
 #( $mass, $delta, $molecular_species ) = ( 160.081 , 0.5, 'neutral' ) ; 
@@ -48,12 +48,12 @@ my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, 
 #=============================================================================
 
 &GetOptions ( 	"h"					=> \$help,				# HELP
+				"mass:s"			=> \$mass,				## option : one masse
 				"masses:s"			=> \$masses_file,		## option : path to the input
-				"colid:i"			=> \$col_id,			## Column id for retrieve formula/masses list in tabular file
-				"colfactor:i"		=> \$col_mass,			## Column id for retrieve formula list in tabular file
 				"header_choice:s"	=> \$header_choice,		## Presence or not of header in tabular file
 				"nblineheader:i"	=> \$nbline_header,		## numbre of header line present in file
-				"mass:s"			=> \$mass,				## option : one masse
+				"colid:i"			=> \$col_id,			## Column id for retrieve formula/masses list in tabular file
+				"colfactor:i"		=> \$col_mass,			## Column id for retrieve formula list in tabular file
 				"delta:f"			=> \$delta,
 				"mode:s"			=> \$molecular_species,	## Molecular species (positive/negative/neutral) 
 				"output|o:s"		=> \$out_tab,			## option : path to the ouput (tabular : input+results )
