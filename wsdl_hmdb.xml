@@ -28,8 +28,8 @@
         <param name="colid" label="Column of Id " type="data_column" data_ref="masses" accept_default="true" />
 	    <conditional name="header">
           <param name="header_choice" type="select" label="Do you have a header " help="if 'YES' is selected then enter your number of header lines">
-            <option value="NO">NO</option>
-            <option value="YES" selected="true">YES</option>
+            <option value="no">NO</option>
+            <option value="yes" selected="true">YES</option>
           </param>
           <when value="YES">
             <param name="nbHeader" label="Number of header lines " type="integer" value="1" min="1" size="10" help="number of lines not containing masses"/>
