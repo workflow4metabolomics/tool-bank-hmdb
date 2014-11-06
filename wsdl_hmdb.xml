@@ -31,7 +31,7 @@
             <option value="no">NO</option>
             <option value="yes" selected="true">YES</option>
           </param>
-          <when value="YES">
+          <when value="yes">
             <param name="nbHeader" label="Number of header lines " type="integer" value="1" min="1" size="10" help="number of lines not containing masses"/>
           </when>
         </conditional>
