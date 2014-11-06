@@ -526,7 +526,7 @@ sub write_html_skel {
 }
 ## END of SUB
 
-=head2 METHOD set_hmdb_matrix_object
+=head2 METHOD set_lm_matrix_object
 
 	## Description : build the hmdb_row under its ref form
 	## Input : $header, $init_mzs, $entries
@@ -651,7 +651,7 @@ sub write_csv_skel {
     my $self = shift ;
     my ( $csv_file, $rows ) = @_ ;
     
-    my $ocsv = formats::csv::new() ;
+    my $ocsv = lib::csv::new() ;
 	my $csv = $ocsv->get_csv_object("\t") ;
 	$ocsv->write_csv_from_arrays($csv, $$csv_file, $rows) ;
     
