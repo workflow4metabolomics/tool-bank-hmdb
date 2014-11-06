@@ -13,8 +13,8 @@ use vars qw($VERSION @ISA @EXPORT %EXPORT_TAGS);
 
 our $VERSION = "1.0";
 our @ISA = qw(Exporter);
-our @EXPORT = qw( get_csv_object get_value_from_csv );
-our %EXPORT_TAGS = ( ALL => [qw( get_csv_object get_value_from_csv )] );
+our @EXPORT = qw( get_csv_object get_value_from_csv_multi_header );
+our %EXPORT_TAGS = ( ALL => [qw( get_csv_object get_value_from_csv_multi_header )] );
 
 =head1 NAME
 
@@ -75,16 +75,16 @@ sub get_csv_object {
 }
 ## END of SUB
 
-=head2 METHOD get_value_from_csv
+=head2 METHOD get_value_from_csv_multi_header
 
 	## Description : extract a targeted column in a csv file 
 	## Input : $csv, $file, $column, $is_header, $nb_header
 	## Output : $value
-	## Usage : my ( $value ) = get_value_from_csv( $csv, $file, $column, $is_header, $nb_header ) ;
+	## Usage : my ( $value ) = get_value_from_csv_multi_header( $csv, $file, $column, $is_header, $nb_header ) ;
 	
 =cut
 ## START of SUB
-sub get_value_from_csv {
+sub get_value_from_csv_multi_header {
 	## Retrieve Values
     my $self = shift ;
     my ( $csv, $file, $column, $is_header, $nb_header ) = @_ ;
@@ -218,7 +218,7 @@ You can find documentation for this module with the perldoc command.
 
 =over 4
 
-=item :ALL is get_csv_object, get_value_from_csv
+=item :ALL is get_csv_object, get_value_from_csv_multi_header
 
 =back
 
