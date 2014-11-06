@@ -94,12 +94,11 @@ elsif ( ( defined $masses_file ) and ( $masses_file ne "" ) and ( -e $masses_fil
 	$complete_rows = $ocsv_input->parse_csv_object($complete_csv, \$masses_file) ;
 	
 	## parse csv ids and masses
-	my $is_header = undef ;
 	my $ocsv = lib::csv->new() ;
 	my $csv = $ocsv->get_csv_object( "\t" ) ;
-	if ( ( defined $nbline_header ) and ( $nbline_header > 0 ) ) { $is_header = 'yes' ;	}
-	$masses = $ocsv->get_value_from_csv( $csv, $masses_file, $col_mass, $is_header ) ; ## retrieve mz values on csv
-	$ids = $ocsv->get_value_from_csv( $csv, $masses_file, $col_id, $is_header ) ; ## retrieve ids values on csv
+	if ( ( !defined $nbline_header ) or ( $nbline_header < 0 ) ) { $nbline_header = 0 ;	}
+	$masses = $ocsv->get_value_from_csv( $csv, $masses_file, $col_mass, $header_choice, $nbline_header ) ; ## retrieve mz values on csv
+	$ids = $ocsv->get_value_from_csv( $csv, $masses_file, $col_id, $header_choice, $nbline_header ) ; ## retrieve ids values on csv
 }
 
 ## ---------------- launch queries -------------------- :

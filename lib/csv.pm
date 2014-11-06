@@ -78,16 +78,16 @@ sub get_csv_object {
 =head2 METHOD get_value_from_csv
 
 	## Description : extract a targeted column in a csv file 
-	## Input : $csv, $file, $column, $is_header
+	## Input : $csv, $file, $column, $is_header, $nb_header
 	## Output : $value
-	## Usage : my ( $value ) = get_value_from_csv( $csv, $file, $column, $is_header ) ;
+	## Usage : my ( $value ) = get_value_from_csv( $csv, $file, $column, $is_header, $nb_header ) ;
 	
 =cut
 ## START of SUB
 sub get_value_from_csv {
 	## Retrieve Values
     my $self = shift ;
-    my ( $csv, $file, $column, $is_header ) = @_ ;
+    my ( $csv, $file, $column, $is_header, $nb_header ) = @_ ;
     
     my @value = () ;
     
@@ -102,7 +102,7 @@ sub get_value_from_csv {
 		$line++ ;
 	    chomp $_ ;
 		# file has a header
-		if ( defined $is_header ) { if ($line == 1) { next ; } }
+		if ( defined $is_header and $is_header eq 'yes') { if ($line <= $nb_header) { next ; } }
 		# parsing the targeted column
 	    if ( $csv->parse($_) ) {
 	        my @columns = $csv->fields();
