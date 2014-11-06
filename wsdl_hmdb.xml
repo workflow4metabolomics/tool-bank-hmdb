@@ -7,7 +7,7 @@
         #if str($input_type.choice) == "YES":
             -masses "${input_type.masses}"
             -header_choice "${input_type.header.header_choice}"
-            #if str($input_type.header.header_choice) == "YES":
+            #if str($input_type.header.header_choice) == "yes":
                 -nblineheader "${$input_type.header.nbHeader}"
             #end if
             -colid "${input_type.colid}" -colfactor "${input_type.colfactor}"
