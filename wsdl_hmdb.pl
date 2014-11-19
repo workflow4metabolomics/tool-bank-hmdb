@@ -248,8 +248,10 @@ This program is free software; you can redistribute it and/or modify it under th
 
 =head1 VERSION
 
-version 1 : xx / xx / 201x
+version 1 : 06 / 06 / 2013
 
-version 2 : ??
+version 2 : 27 / 01 / 2014
+
+version 3 : 19 / 11 / 2014
 
 =cut
