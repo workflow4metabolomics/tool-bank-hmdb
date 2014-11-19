@@ -42,7 +42,7 @@
       </when>
     </conditional>
     
-    <param name="delta" label="Molecular Weight Tolerance +/- " type="float" value="0.05" min="0.0000000000000001" max="10" size="10" help="Default value is 0.05 for HMDB (Da)"/>
+    <param name="delta" label="Molecular Weight Tolerance +/- " type="float" value="0.05" min="0" max="10" size="10" help="Default value is 0.05 for HMDB (Da)"/>
     <param name="mode" label="Molecular Species " type="select" display="radio" help="">
       <option value="positive">Positif Mode</option>
       <option value="negative">Negatif Mode</option>
@@ -72,7 +72,7 @@
 ---------------------------------------------------
 
 ==============
-WS_HMDB
+HMDB MS search
 ==============
 
 -----------
@@ -100,10 +100,10 @@ Input files
 +-------------------------+-----------+
 | Parameter : num + label |  Format   |
 +=========================+===========+
-| 1 : variableMetadata    |  tabular  |
+| 1 : File of masses      |  tabular  |
 +-------------------------+-----------+
 
-File of masses must have at least the 2 following column : 
+File of masses (Generally variable metadata file) must have at least the 2 following column : 
 	* Id : column to identify masses in the tsv input file
 	* Masses : column with all the masses in the tsv input file
 
@@ -126,7 +126,7 @@ File of masses
 	| 
 
 Do you have a header
-	| YES (default) : parameters **Number of header lines** are visible
+	| YES (default) : parameter **Number of header lines** is visible
 	| NO : all lines are considered to contain masses
 	|
 
