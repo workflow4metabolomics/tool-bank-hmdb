@@ -526,7 +526,7 @@ sub write_html_skel {
 }
 ## END of SUB
 
-=head2 METHOD set_hmdb_matrix_object
+=head2 METHOD set_lm_matrix_object
 
 	## Description : build the hmdb_row under its ref form
 	## Input : $header, $init_mzs, $entries
@@ -598,22 +598,29 @@ sub set_lm_matrix_object {
 =head2 METHOD add_lm_matrix_to_input_matrix
 
 	## Description : build a full matrix (input + lm column)
-	## Input : $input_matrix_object, $lm_matrix_object
+	## Input : $input_matrix_object, $lm_matrix_object, $nb_header
 	## Output : $output_matrix_object
-	## Usage : my ( $output_matrix_object ) = add_lm_matrix_to_input_matrix( $input_matrix_object, $lm_matrix_object ) ;
+	## Usage : my ( $output_matrix_object ) = add_lm_matrix_to_input_matrix( $input_matrix_object, $lm_matrix_object, $nb_header ) ;
 	
 =cut
 ## START of SUB
 sub add_lm_matrix_to_input_matrix {
 	## Retrieve Values
     my $self = shift ;
-    my ( $input_matrix_object, $lm_matrix_object ) = @_ ;
+    my ( $input_matrix_object, $lm_matrix_object, $nb_header ) = @_ ;
     
     my @output_matrix_object = () ;
     my $index_row = 0 ;
+    my $line = 0 ;
     
     foreach my $row ( @{$input_matrix_object} ) {
     	my @init_row = @{$row} ;
+    	$line++;
+    	
+    	if ( ( defined $nb_header ) and ( $line <= $nb_header) ) {
+    		push (@output_matrix_object, \@init_row) ;
+    		next ;
+    	}
     	
     	if ( $lm_matrix_object->[$index_row] ) {
     		my $dim = scalar(@{$lm_matrix_object->[$index_row]}) ;
@@ -644,7 +651,7 @@ sub write_csv_skel {
     my $self = shift ;
     my ( $csv_file, $rows ) = @_ ;
     
-    my $ocsv = formats::csv::new() ;
+    my $ocsv = lib::csv::new() ;
 	my $csv = $ocsv->get_csv_object("\t") ;
 	$ocsv->write_csv_from_arrays($csv, $$csv_file, $rows) ;
     
@@ -746,5 +753,7 @@ This program is free software; you can redistribute it and/or modify it under th
 version 1 : 06 / 06 / 2013
 
 version 2 : 27 / 01 / 2014
+
+version 3 : 19 / 11 / 2014
 
 =cut

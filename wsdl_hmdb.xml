@@ -1,11 +1,16 @@
-<tool id="wsdl_hmdb" name="HMDB MS search" version="2014-05-07">
+<tool id="wsdl_hmdb" name="HMDB MS search" version="2014-12-11">
   <description>
-        search on HMDB by file selection
+        search by masses on HMDB online bank
   </description>
   <command interpreter="perl">
         wsdl_hmdb.pl
         #if str($input_type.choice) == "YES":
-            -masses "${input_type.masses}" -colid "${input_type.colid}" -lineheader "${input_type.lineheader}" -colfactor "${input_type.colfactor}"
+            -masses "${input_type.masses}"
+            -header_choice "${input_type.header.header_choice}"
+            #if str($input_type.header.header_choice) == "yes":
+                -nblineheader "${$input_type.header.nbHeader}"
+            #end if
+            -colid "${input_type.colid}" -colfactor "${input_type.colfactor}"
         #else:
             -mass "${input_type.mass}"
         #end if
@@ -19,17 +24,25 @@
         <option value="NO">NO</option>
       </param>
       <when value="YES">
-        <param name="masses" label="File of masses " format="tabular" type="data" help="Please note : HMDB allows maximum 150 query masses per request" />
-        <param name="colid" label="Column of Id " type="data_column" data_ref="masses" accept_default="true" />
-	    <param name="lineheader" label="Number of header lines " type="integer" value="0" size="10" help="number of lines not containing values"/>
+        <param name="masses" label="File of masses (format: tabular) " format="tabular" type="data" help="Generally variable metadata file. Please note : HMDB allows maximum 150 query masses per request" />
+        <conditional name="header">
+          <param name="header_choice" type="select" label="Do you have a header " help="if 'YES' is selected then enter your number of header lines">
+            <option value="no">NO</option>
+            <option value="yes" selected="true">YES</option>
+          </param>
+          <when value="yes">
+            <param name="nbHeader" label="Number of header lines " type="integer" value="1" min="1" size="10" help="number of lines not containing masses"/>
+          </when>
+        </conditional>
+	    <param name="colid" label="Column of Id " type="data_column" data_ref="masses" accept_default="true" />
 	    <param name="colfactor" label="Column of masses " type="data_column" data_ref="masses" accept_default="true" />
       </when>
       <when value="NO">
-        <param name="mass" label="mass to submit " type="text" size="20" help="You should use dot (.) like decimal separator" />
+        <param name="mass" label="Mass to submit " type="text" size="20" help="For a masses list, writes : m1 m2 m3. Your values ​​must be separated by spaces. You should use dot (.) like decimal separator" />
       </when>
     </conditional>
     
-    <param name="delta" label="Molecular Weight Tolerance +/- " type="float" value="0.05" min="0.0000000000000001" max="10" size="10" help="Default value is 0.05 for HMDB (Da)"/>
+    <param name="delta" label="Molecular Weight Tolerance +/- " type="float" value="0.05" min="0" max="10" size="10" help="Default value is 0.05 for HMDB (Da)"/>
     <param name="mode" label="Molecular Species " type="select" display="radio" help="">
       <option value="positive">Positif Mode</option>
       <option value="negative">Negatif Mode</option>
@@ -59,14 +72,14 @@
 ---------------------------------------------------
 
 ==============
-WS_HMDB
+HMDB MS search
 ==============
 
 -----------
 Description
 -----------
 
- | Search informations (like : HMDB id,  Name, Adduct, delta mass) on HMDB
+ | Search informations (like : HMDB id,  Name, Adduct, delta mass) on HMDB online bank
  | with one or more mass(es) in a file or entered manually
 
 
@@ -87,12 +100,12 @@ Input files
 +-------------------------+-----------+
 | Parameter : num + label |  Format   |
 +=========================+===========+
-| 1 : variableMetadata    |  tabular  |
+| 1 : File of masses      |  tabular  |
 +-------------------------+-----------+
 
-File of masses must have at least the 2 following column : 
-	* Id : column to identify masses in the csv/tsv input file
-	* Masses : column with all the masses in the csv/tsv input file
+File of masses (Generally variable metadata file) must have at least the 2 following column : 
+	* Id : column to identify masses in the tsv input file
+	* Masses : column with all the masses in the tsv input file
 
 ----------
 Parameters
@@ -100,43 +113,59 @@ Parameters
 
 Would you use a file
 	| Choose whether the masses are in a file or entered manually
-	| YES (default) : parameters **File of masses ; Column of Id ; Number of header ; Column of masses** are visible
-	| NO : parameter **Mass of the molecule** is visible
+	| YES (default) : parameters **File of masses ; Do you have a header ; Column of Id ; Column of masses** are visible
+	| NO : parameter **Mass to submit** is visible
 	|
 
 
 If 'use file'='YES'
 
-Column of Id
-	| Specify the column number for the id in the csv/tsv input file
+File of masses
+	| see "Input files" section above
+	| Tabular file format, Generally variable metadata file
+	| 
+
+Do you have a header
+	| YES (default) : parameter **Number of header lines** is visible
+	| NO : all lines are considered to contain masses
 	|
 
+If 'have a header'='YES'
+
 Number of header lines
-	| Number of lines not containing values 
+	| Number of lines not containing masses values, these lines will be ignored
+	|
+
+In all header cases :
+
+Column of Id
+	| Specify the column number for the id in the tsv input file
 	|
 
 Column of masses
-	| Specify the column number for the mass in the csv/tsv input file
+	| Specify the column number for the mass in the tsv input file
 	|
 
 
 If 'use file'='NO'
 
-Mass of the molecule
+Mass to submit
 	| Specify a list of mass to request
 	| one or more mass(es) entered manually
-	| For a masses list, writes : m1,m2,m3
-	| You must separate yours values with coma (,)
+	| For a masses list, writes : m1 m2 m3
+	| You must separate yours values with space
 	| dot (.) is for float number
 	|
 
 In all cases :
 
-Tolerance
+Molecular Weight Tolerance
 	| Specify a delta (Da) to apply on mass - This value is a float, between 0.0000000000000001 and 10.
+	|
 
 Molecular Species
 	| Type of ionization of the molecule : *positif, negatif, neutral*
+	|
 
 
 ------------
@@ -145,8 +174,11 @@ Output files
 
 Two types of files
 	| wsdl_hmdb_VIEW.HTML : for viewing result via HTML.
+	| 
 	| wsdl_hmdb_TSV.tabular : for linking with others modules.
+	| 
 	| an excel-like output will be available. 
+	| 
 	
 ---------------------------------------------------
 

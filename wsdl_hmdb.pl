@@ -15,23 +15,28 @@ use Text::CSV ;
 use POSIX ;
 use FindBin ; ## Permet de localisez le repertoire du script perl d'origine
 
-## PFEM Perl Modules
-use conf::conf  qw( :ALL ) ;
-use formats::csv  qw( :ALL ) ;
-
-## Specific Modules
+## Specific Modules (Home made...)
 use lib $FindBin::Bin ;
 my $binPath = $FindBin::Bin ;
 use lib::hmdb qw( :ALL ) ;
+## PFEM Perl Modules
+use lib::conf  qw( :ALL ) ;
+use lib::csv  qw( :ALL ) ;
 
 ## Initialized values
 my ( $help ) = undef ;
 my ( $mass ) = undef ;
-my ( $masses_file, $col_id, $col_mass, $line_header ) = ( undef, undef, undef, undef ) ;
+my ( $masses_file, $col_id, $col_mass, $header_choice, $nbline_header ) = ( undef, undef, undef, undef, undef ) ;
 my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, undef ) ;
 
-## FOR TEST : with masses_file
-#( $masses_file, $delta, $molecular_species, $col_id, $col_mass, $line_header ) = ( 'E:\\TESTs\\galaxy\\hmdb\\ex_HR_set10entries_with_formula_and_header.txt', 0.05, 'neutral', 1, 2, 0 ) ;
+## FOR TEST :
+## with masses_file
+## whith 0 header line
+#( $masses_file, $header_choice, $col_id, $col_mass, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_without_header.tabular', 'no', 1, 2, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
+## whith 1 header line
+#( $masses_file, $header_choice, $nbline_header, $col_id, $col_mass, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_with_header.tabular', 'yes', 1, 1, 2, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
+## whith 2 header line
+#( $masses_file, $header_choice, $nbline_header, $col_id, $col_mass, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_with_2header.tabular', 'yes', 2, 1, 2, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
 
 ## with a only one mass
 #( $mass, $delta, $molecular_species ) = ( 160.081 , 0.5, 'neutral' ) ; 
@@ -42,16 +47,17 @@ my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, 
 #                                Manage EXCEPTIONS
 #=============================================================================
 
-&GetOptions ( 	"h"     		=> \$help,       # HELP
-				"masses:s"		=> \$masses_file, ## option : path to the input
-				"colid:i"		=> \$col_id, ## Column id for retrieve formula/masses list in tabular file
-				"colfactor:i"	=> \$col_mass, ## Column id for retrieve formula list in tabular file
-				"lineheader:i"	=> \$line_header, ## header presence in tabular file
-				"mass:s"		=> \$mass, ## option : one masse
-				"delta:f"		=> \$delta,
-				"mode:s"		=> \$molecular_species, ## Molecular species (positive/negative/neutral) 
-				"output|o:s"	=> \$out_tab, ## option : path to the ouput (tabular : input+results )
-				"view|v:s"		=> \$out_html, ## option : path to the results view (output2)
+&GetOptions ( 	"h"					=> \$help,				# HELP
+				"mass:s"			=> \$mass,				## option : one masse
+				"masses:s"			=> \$masses_file,		## option : path to the input
+				"header_choice:s"	=> \$header_choice,		## Presence or not of header in tabular file
+				"nblineheader:i"	=> \$nbline_header,		## numbre of header line present in file
+				"colid:i"			=> \$col_id,			## Column id for retrieve formula/masses list in tabular file
+				"colfactor:i"		=> \$col_mass,			## Column id for retrieve formula list in tabular file
+				"delta:f"			=> \$delta,
+				"mode:s"			=> \$molecular_species,	## Molecular species (positive/negative/neutral) 
+				"output|o:s"		=> \$out_tab,			## option : path to the ouput (tabular : input+results )
+				"view|v:s"			=> \$out_html,			## option : path to the results view (output2)
             ) ;
 
 #=============================================================================
@@ -67,7 +73,7 @@ $help and &help ;
 ## -------------- Conf file ------------------------ :
 my ( $CONF ) = ( undef ) ;
 foreach my $conf ( <$binPath/*.cfg> ) {
-	my $oConf = conf::conf::new() ;
+	my $oConf = lib::conf::new() ;
 	$CONF = $oConf->as_conf($conf) ;
 }
 
@@ -79,25 +85,26 @@ my $search_condition = "Search params : Molecular specie = $molecular_species / 
 ## --------------- retrieve input data -------------- :
 
 ## manage only one mass
-if ( ( defined $mass ) and ( $mass ne "" ) and ( $mass > 0 ) ) {
-	$ids = ['mass_01'] ;
-	$masses = [$mass] ;
-	
+if ( ( defined $mass ) and ( $mass ne "" ) ) {
+	my @masses = split(" ", $mass);
+	$masses = \@masses ;
+	for (my $i=1 ; $i<=$#masses+1 ; $i++){
+		push (@$ids,"mass_0".$i );
+	}
 } ## END IF
 ## manage csv file containing list of masses
 elsif ( ( defined $masses_file ) and ( $masses_file ne "" ) and ( -e $masses_file ) ) {
 	## parse all csv for later : output csv build
-	my $ocsv_input  = formats::csv->new() ;
+	my $ocsv_input  = lib::csv->new() ;
 	my $complete_csv = $ocsv_input->get_csv_object( "\t" ) ;
 	$complete_rows = $ocsv_input->parse_csv_object($complete_csv, \$masses_file) ;
 	
 	## parse csv ids and masses
-	my $is_header = undef ;
-	my $ocsv = formats::csv->new() ;
+	my $ocsv = lib::csv->new() ;
 	my $csv = $ocsv->get_csv_object( "\t" ) ;
-	if ( ( defined $line_header ) and ( $line_header > 0 ) ) { $is_header = 'yes' ;	}
-	$masses = $ocsv->get_value_from_csv( $csv, $masses_file, $col_mass, $is_header ) ; ## retrieve mz values on csv
-	$ids = $ocsv->get_value_from_csv( $csv, $masses_file, $col_id, $is_header ) ; ## retrieve ids values on csv
+	if ( ( !defined $nbline_header ) or ( $nbline_header < 0 ) ) { $nbline_header = 0 ;	}
+	$masses = $ocsv->get_value_from_csv_multi_header( $csv, $masses_file, $col_mass, $header_choice, $nbline_header ) ; ## retrieve mz values on csv
+	$ids = $ocsv->get_value_from_csv_multi_header( $csv, $masses_file, $col_id, $header_choice, $nbline_header ) ; ## retrieve ids values on csv
 }
 
 ## ---------------- launch queries -------------------- :
@@ -108,12 +115,12 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 	my $hmdb_pages = undef ;
 	
 	## manage two modes
-	if (defined $mass) { # manual mode (don't manage more than 150 mz per job)
-		$hmdb_pages = $oHmdb->get_matches_from_hmdb_ua($mass, $delta, $molecular_species) ; 
-		$results = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $masses) ; ## hash format results
-	}
+	#if (defined $mass) { # manual mode (don't manage more than 150 mz per job)
+	#	$hmdb_pages = $oHmdb->get_matches_from_hmdb_ua($mass, $delta, $molecular_species) ; 
+	#	$results = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $masses) ; ## hash format results
+	#}
 	
-	if (defined $masses_file) {
+	#if (defined $masses_file) {
 		$results = [] ; # prepare arrays ref
 		my $submasses = $oHmdb->extract_sub_mz_lists($masses, $CONF->{HMDB_LIMITS} ) ;
 		
@@ -126,7 +133,7 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 			
 			$results = [ @$results, @$result ] ;
 		}
-	}
+	#}
 	
 	## Uses N mz and theirs entries per page (see config file).
 	# how many pages you need with your input mz list?
@@ -157,9 +164,16 @@ if ( ( defined $out_tab ) and ( defined $results ) ) {
 	my $ocsv = lib::hmdb::new() ;
 	if (defined $masses_file) {
 		my $lm_matrix = undef ;
-		if ( ( defined $line_header ) and ( $line_header == 1 ) ) { $lm_matrix = $ocsv->set_lm_matrix_object('hmdb', $masses, $results ) ; }
-		elsif ( ( defined $line_header ) and ( $line_header == 0 ) ) { $lm_matrix = $ocsv->set_lm_matrix_object(undef, $masses, $results ) ; }
-		$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix) ;
+		if ( ( defined $nbline_header ) and ( $header_choice eq 'yes' ) ) {
+			$lm_matrix = $ocsv->set_lm_matrix_object('hmdb', $masses, $results ) ;
+			#$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix) ;
+			$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix, $nbline_header-1) ;
+		}
+		elsif ( ( $header_choice eq 'no' ) ) {
+			$lm_matrix = $ocsv->set_lm_matrix_object(undef, $masses, $results ) ;
+			#$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix) ;
+			$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix, 0) ;
+		}
 		$ocsv->write_csv_skel(\$out_tab, $lm_matrix) ;
 	}
 	elsif (defined $mass) {
@@ -234,8 +248,10 @@ This program is free software; you can redistribute it and/or modify it under th
 
 =head1 VERSION
 
-version 1 : xx / xx / 201x
+version 1 : 06 / 06 / 2013
 
-version 2 : ??
+version 2 : 27 / 01 / 2014
+
+version 3 : 19 / 11 / 2014
 
 =cut
