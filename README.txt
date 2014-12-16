@@ -1,5 +1,5 @@
 ## ****** HMDB environnemnt : ****** ##
-# version 2014-05-07 M Landi / F Giacomoni
+# version December 2014 M Landi / F Giacomoni
 
 ## --- PERL compilator / libraries : --- ##
 $ perl -v
@@ -28,7 +28,7 @@ cpan> install URI::URL
 cpan> install SOAP::Lite
 cpan>  install HTML::Template
 
-# libs pfem PERL : include the lib called pfem-perl in your PERL5LIB path. This lib is available in the ABIMS toolshed "Tool Dependency Packages" category.
+# libs pfem PERL : this lib were included in local. NO PATH TO CHANGE !!!
 use conf::conf  qw( :ALL ) ;
 use formats::csv  qw( :ALL ) ;
 --
@@ -42,7 +42,7 @@ No interaction with binary - use only HMDB post method (http://www.hmdb.ca/spect
 --
 
 ## --- Config : --- ##
-Edit the following lines in the config file : ~/metabolomics/Identification/Banks_Queries/HMDB/conf_hmdb.cfg
+!!! EDIT THE FOLLOWING LINES in the config file : ~/metabolomics/Identification/Banks_Queries/HMDB/conf_hmdb.cfg
 JS_GALAXY_PATH=http://YOUR_GALAXY_HOSTNAME/static/scripts/libs/outputs
 CSS_GALAXY_PATH=http://YOUR_GALAXY_HOSTNAME/static/style
 HTML_TEMPLATE=absolute_path_to_/hmdb.tmpl
@@ -50,7 +50,8 @@ HTML_TEMPLATE=absolute_path_to_/hmdb.tmpl
 --
 
 ## --- XML HELP PART --- ##
-Copy the following images in ~/static/images/metabolomics
+one image : 
+hmdb.png
 --
 
 ## --- DATASETS --- ##
