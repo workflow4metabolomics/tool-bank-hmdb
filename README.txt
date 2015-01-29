@@ -47,6 +47,8 @@ JS_GALAXY_PATH=http://YOUR_GALAXY_HOSTNAME/static/scripts/libs/outputs
 CSS_GALAXY_PATH=http://YOUR_GALAXY_HOSTNAME/static/style
 HTML_TEMPLATE=absolute_path_to_/hmdb.tmpl
 
+
+PS :If Galaxy can't find the file "hmdb.tmpl", perform this command line : perl -pi -e 's/\r//g' conf_hmdb.cfg
 --
 
 ## --- XML HELP PART --- ##
@@ -59,6 +61,8 @@ No data set ! waiting for galaxy pages
 --
 
 ## --- ??? COMMENTS ??? --- ##
+If Galaxy can't find the file "hmdb.tmpl", perform this command line : " perl -pi -e 's/\r//g' " on the conf file "conf_hmdb.cfg".
+
 To use full funtionalities of html output files : 
   - check that sanitize_all_html option in universe_wsgi.ini file is uncomment and set to FALSE.
   - copy the following JS files in YOUR_GALAXY_PATH/static/scripts/libs/outputs/ : jquery.simplePagination.js
