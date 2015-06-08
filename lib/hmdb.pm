@@ -107,7 +107,7 @@ sub prepare_multi_masses_query {
     my ( $masses ) = @_ ;
     
     my $hmdb_masses = undef ;
-    my $sep = '%0D%0A' ; ## retour chariot encodé
+    my $sep = '%0D%0A' ; ## retour chariot encode
     my ($nb_masses, $i) = (0, 0) ;
     
     if ( defined $masses ) {
@@ -198,7 +198,14 @@ sub get_matches_from_hmdb_ua {
 	 
 	my $res = $ua->request($req);
 #	print $res->as_string;
-	@page = split ( /\n/, $res->decoded_content ) ;
+	if ($res->is_success) {
+	     @page = split ( /\n/, $res->decoded_content ) ;
+	 } else {
+	 	my $status_line = $res->status_line ;
+	 	($status_line) = ($status_line =~ /(\d+)/);
+	 	croak "HMDB service none available !! Status of the HMDB server is : $status_line\n" ;
+	 }
+	
 	
 	return (\@page) ;
 }
@@ -225,6 +232,8 @@ sub parse_hmdb_csv_results {
     
     my %result_by_entry = () ;
     my %features = () ;
+    
+    print Dumper $csv ;
     
     foreach my $line (@{$csv}) {
     	
@@ -299,7 +308,7 @@ sub parse_hmdb_page_results {
 			    	$catch_name = 0 ;
 			    	next ;
 			    }
-			    #Nom de la molécule ONLY!!
+			    #Nom de la molecule ONLY!!
 			    if ( $catch_name == 0 ) {
 			    	
 			    	if( $line =~ /<td>(.+)<\/td>/ ) {
