@@ -177,14 +177,21 @@ sub help {
 	print STDERR "
 wsdl_hmdb
 
-# wsdl_hmdb is a script to query HMDB website using chemical formula and return a list of common names.
+# wsdl_hmdb is a script to query HMDB website using mz and return a list of candidates sent by HMDB based on the ms search tool.
 # Input : formula or list of formula
-# Author : Franck Giacomoni
+# Author : Franck Giacomoni and Marion Landi
 # Email : fgiacomoni\@clermont.inra.fr
 # Version : 1.0
 # Created : 08/07/2012
 USAGE :		 
-		wsdl_hmdb.pl -input [path to list of formula file] -f [formula] -output [output file format1] -view [output file format2] -colid [col of id in input file] -colfactor [col of factor] -lineheader [nb of lines containing file header : 0-n]
+		wsdl_hmdb.pl 	-mass [one mass or a string list of exact masses] -delta [mz delta] -mode [molecular species: positive|negative|neutral] -output [output tabular file] -view [output html file] 
+		
+		or 
+		wsdl_hmdb.pl 	-masses [an input file of mzs] -colfactor [col of mz] -header_choice [yes|no] -nblineheader [nb of lines containing file header : 0-n]
+						-delta [mz delta] -mode [molecular species: positive|negative|neutral] -output [output tabular file] -view [output html file] 
+						
+		or 
+		wsdl_hmdb.pl 	-h for help
 		
 		";
 	exit(1);
