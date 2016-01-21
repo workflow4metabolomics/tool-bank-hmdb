@@ -203,20 +203,23 @@ __END__
 
 =head1 NAME
 
- XXX.pl -- script for
+ wsdl_hmdb.pl -- script to query HMDB website using mz and return a list of candidates sent by HMDB based on the ms search tool.
 
 =head1 USAGE
 
- XXX.pl -precursors -arg1 [-arg2] 
- or XXX.pl -help
+	wsdl_hmdb.pl 	-mass [one mass or a string list of exact masses] -delta [mz delta] -mode [molecular species: positive|negative|neutral] -output [output tabular file] -view [output html file] 
+		
+	or 
+	wsdl_hmdb.pl 	-masses [an input file of mzs] -colfactor [col of mz] -header_choice [yes|no] -nblineheader [nb of lines containing file header : 0-n]
+					-delta [mz delta] -mode [molecular species: positive|negative|neutral] -output [output tabular file] -view [output html file] 
 
 =head1 SYNOPSIS
 
-This script manage ... 
+This script manages batch queries on HMDB server. 
 
 =head1 DESCRIPTION
 
-This main program is a ...
+This main program is a script to query HMDB website using mz and return a list of candidates sent by HMDB based on the ms search tool.
 
 =over 4
 
@@ -241,5 +244,7 @@ version 1 : 06 / 06 / 2013
 version 2 : 27 / 01 / 2014
 
 version 3 : 19 / 11 / 2014
+
+version 4 : 21 / 01 / 2016 - a clean version for community
 
 =cut
