@@ -29,19 +29,6 @@ my ( $mass ) = undef ;
 my ( $masses_file, $col_id, $col_mass, $header_choice, $nbline_header ) = ( undef, undef, undef, undef, undef ) ;
 my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, undef ) ;
 
-## FOR TEST :
-## with masses_file
-## whith 0 header line
-#( $masses_file, $header_choice, $col_id, $col_mass, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_without_header.tabular', 'no', 1, 2, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
-## whith 1 header line
-#( $masses_file, $header_choice, $nbline_header, $col_id, $col_mass, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_with_header.tabular', 'yes', 1, 1, 2, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
-## whith 2 header line
-#( $masses_file, $header_choice, $nbline_header, $col_id, $col_mass, $delta, $molecular_species, $out_tab, $out_html ) = ( 'Y:\datasets\annotations\3masses_with_2header.tabular', 'yes', 2, 1, 2, 0.05, 'neutral', 'J:\result_hmdb\out_tab.tsv', 'J:\result_hmdb\out_view.html' ) ;
-
-## with a only one mass
-#( $mass, $delta, $molecular_species ) = ( 160.081 , 0.5, 'neutral' ) ; 
-
-#( $out_tab, $out_html ) = ('E:\\TESTs\\galaxy\\hmdb\\results_hmdb.txt', 'E:\\TESTs\\galaxy\\hmdb\\results_hmdb.html') ; ## 2d case
 
 #=============================================================================
 #                                Manage EXCEPTIONS
