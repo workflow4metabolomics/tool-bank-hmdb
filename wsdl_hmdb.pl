@@ -105,13 +105,6 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 	my $oHmdb = lib::hmdb::new() ;
 	my $hmdb_pages = undef ;
 	
-	## manage two modes
-	#if (defined $mass) { # manual mode (don't manage more than 150 mz per job)
-	#	$hmdb_pages = $oHmdb->get_matches_from_hmdb_ua($mass, $delta, $molecular_species) ; 
-	#	$results = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $masses) ; ## hash format results
-	#}
-	
-	#if (defined $masses_file) {
 		$results = [] ; # prepare arrays ref
 		my $submasses = $oHmdb->extract_sub_mz_lists($masses, $CONF->{HMDB_LIMITS} ) ;
 		
@@ -124,7 +117,6 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 			
 			$results = [ @$results, @$result ] ;
 		}
-	#}
 	
 	## Uses N mz and theirs entries per page (see config file).
 	# how many pages you need with your input mz list?
@@ -157,12 +149,10 @@ if ( ( defined $out_tab ) and ( defined $results ) ) {
 		my $lm_matrix = undef ;
 		if ( ( defined $nbline_header ) and ( $header_choice eq 'yes' ) ) {
 			$lm_matrix = $ocsv->set_lm_matrix_object('hmdb', $masses, $results ) ;
-			#$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix) ;
 			$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix, $nbline_header-1) ;
 		}
 		elsif ( ( $header_choice eq 'no' ) ) {
 			$lm_matrix = $ocsv->set_lm_matrix_object(undef, $masses, $results ) ;
-			#$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix) ;
 			$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix, 0) ;
 		}
 		$ocsv->write_csv_skel(\$out_tab, $lm_matrix) ;
