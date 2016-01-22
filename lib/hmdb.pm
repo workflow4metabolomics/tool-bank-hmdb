@@ -604,6 +604,72 @@ sub set_lm_matrix_object {
 }
 ## END of SUB
 
+=head2 METHOD set_hmdb_matrix_object_with_ids
+
+	## Description : build the hmdb_row under its ref form (IDS only)
+	## Input : $header, $init_mzs, $entries
+	## Output : $hmdb_matrix
+	## Usage : my ( $hmdb_matrix ) = set_hmdb_matrix_object_with_ids( $header, $init_mzs, $entries ) ;
+	
+=cut
+## START of SUB
+sub set_hmdb_matrix_object_with_ids {
+	## Retrieve Values
+    my $self = shift ;
+    my ( $header, $init_mzs, $entries ) = @_ ;
+    
+    my @hmdb_matrix = () ;
+    
+    if ( defined $header ) {
+    	my @headers = () ;
+    	push @headers, $header ;
+    	push @hmdb_matrix, \@headers ;
+    }
+    
+    my $index_mz = 0 ;
+    
+    foreach my $mz ( @{$init_mzs} ) {
+    	
+    	my $index_entries = 0 ;
+    	my @clusters = () ;
+    	my $cluster_col = undef ;
+    	
+    	my @anti_redondant = ('N/A') ;
+    	my $check_rebond = 0 ;
+    	
+    	my $nb_entries = scalar (@{ $entries->[$index_mz] }) ;
+    	    	
+    	foreach my $entry (@{ $entries->[$index_mz] }) {
+    		
+    		## dispo anti doublons des entries
+    		foreach my $rebond (@anti_redondant) {
+    			if ( $rebond eq $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID} ) {	$check_rebond = 1 ; last ; }
+    		}
+	    	
+	    	if ( $check_rebond == 0 ) {
+    				
+	    		push ( @anti_redondant, $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID} ) ;
+	    		my $hmdb_id = $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID}  ;
+		    	
+		    	## METLIN data display model -- IDs ONLY !!
+		   		## entry1=VAR1::VAR2::VAR3::VAR4|entry2=VAR1::VAR2::VAR3::VAR4|...
+		   		# manage final pipe
+		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $hmdb_id.'|' ; }
+		   		else { 						   			$cluster_col .= $hmdb_id ; 	}
+	    		
+	    	}
+	    	$check_rebond = 0 ; ## reinit double control
+	    	$index_entries++ ;
+	    } ## end foreach
+	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on HMDB' ; }
+    	push (@clusters, $cluster_col) ;
+    	push (@hmdb_matrix, \@clusters) ;
+    	$index_mz++ ;
+    }
+    return(\@hmdb_matrix) ;
+}
+## END of SUB
+
 =head2 METHOD add_lm_matrix_to_input_matrix
 
 	## Description : build a full matrix (input + lm column)
