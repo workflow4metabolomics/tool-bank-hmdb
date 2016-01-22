@@ -70,7 +70,7 @@ foreach my $html_template ( <$binPath/*.tmpl> ) { $CONF->{'HTML_TEMPLATE'} = $ht
 ## --------------- Global parameters ---------------- :
 my ( $ids, $masses, $results ) = ( undef, undef, undef ) ;
 my ( $complete_rows, $nb_pages_for_html_out ) = ( undef, 1 ) ;
-my $search_condition = "Search params : Molecular specie = $molecular_species / delta = $delta" ;
+my $search_condition = "Search params : Molecular specie = $molecular_species / delta (mass-to-charge ratio) = $delta" ;
 
 ## --------------- retrieve input data -------------- :
 
