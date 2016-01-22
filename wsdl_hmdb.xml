@@ -41,7 +41,7 @@
       </when>
     </conditional>
     
-    <param name="delta" label="Molecular Weight Tolerance +/- " type="float" value="0.05" min="0" max="10" size="10" help="Default value is 0.05 for HMDB (Da)"/>
+    <param name="delta" label="Mass-to-charge ratio " type="float" value="0.05" min="0" max="10" size="10" help="Default value is 0.05 for HMDB (mass-to-charge ratio)"/>
     <param name="mode" label="Molecular Species " type="select" display="radio" help="">
       <option value="positive">Positif Mode</option>
       <option value="negative">Negatif Mode</option>
@@ -153,8 +153,8 @@ Mass to submit
 
 In all cases :
 
-Molecular Weight Tolerance
-	| Specify a delta (Da) to apply on mass - This value is a float, between 0.0000000000000001 and 10.
+Mass-to-charge ratio
+	| Specify a delta (mass-to-charge ratio) to apply on mass - This value is a float, between 0.0000000000000001 and 10.
 	|
 
 Molecular Species
@@ -184,7 +184,15 @@ Working example
 
 .. class:: warningmark
 
-The corresponding "Page" is coming soon.
+Refer to the corresponding `"W4M HowTo" &lt;http://workflow4metabolomics.org/howto&gt;`_ page:
+ | Format Data For Postprocessing
+ | Perform LCMS Annotations
+
+.. class:: warningmark
+
+And their "W4M courses 2015":
+ | Using Galaxy4Metabolomics - W4M table format for Galaxy
+ | Annotation Banks - Annotation  
 	
 
 	</help>
