@@ -53,6 +53,31 @@
     <data name="variableMetadata" format="tabular" label="${tool.name}_TSV"/>
     <data name="HmdbResView" format="html" label="${tool.name}_VIEW"/>
   </outputs>
+  
+  <tests>
+  	<test>
+  		<!--test 01 no result - fake-mzrt-input-with-id -->
+  		<param name="masses" value="input_test01_fake-mzrt-input-with-id.tsv"/>
+  		<param name="header_choice" value="yes"/>
+  		<param name="nblineheader" value="1"/>
+  		<param name="colfactor" value="2"/>
+  		<param name="delta" value="0.001"/>
+  		<param name="mode" value="neutral"/>
+  		<output name="variableMetadata" file="out_test01.tsv"/>
+  		<output name="HmdbResView" file="out_test01.html"/>
+  	</test>
+  	<test>
+  		<!--test 02 : some results - with-mzrt-input-with-id file-->
+  		<param name="masses" value="input_test02_mzrt-input-with-id.tsv"/>
+  		<param name="header_choice" value="yes"/>
+  		<param name="nblineheader" value="1"/>
+  		<param name="colfactor" value="2"/>
+  		<param name="delta" value="0.001"/>
+  		<param name="mode" value="positive"/>
+  		<output name="variableMetadata" file="out_test02.tsv"/>
+  		<output name="HmdbResView" file="out_test02.html"/>
+  	</test>
+  </tests>
 
   <help>
 
