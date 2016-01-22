@@ -78,9 +78,7 @@ my $search_condition = "Search params : Molecular specie = $molecular_species / 
 if ( ( defined $mass ) and ( $mass ne "" ) ) {
 	my @masses = split(" ", $mass);
 	$masses = \@masses ;
-	for (my $i=1 ; $i<=$#masses+1 ; $i++){
-		push (@$ids,"mz_0".$i );
-	}
+	for (my $i=1 ; $i<=$#masses+1 ; $i++){ push (@$ids,"mz_0".sprintf("%04s", $i ) ); }
 } ## END IF
 ## manage csv file containing list of masses
 elsif ( ( defined $masses_file ) and ( $masses_file ne "" ) and ( -e $masses_file ) ) {
@@ -95,7 +93,7 @@ elsif ( ( defined $masses_file ) and ( $masses_file ne "" ) and ( -e $masses_fil
 	if ( ( !defined $nbline_header ) or ( $nbline_header < 0 ) ) { $nbline_header = 0 ;	}
 	$masses = $ocsv->get_value_from_csv_multi_header( $csv, $masses_file, $col_mass, $header_choice, $nbline_header ) ; ## retrieve mz values on csv
 	my $nbmz = @$masses ;
-	for (my $i=1 ; $i<=$nbmz+1 ; $i++){ 	push (@$ids,"mz_0".$i ); }
+	for (my $i=1 ; $i<=$nbmz+1 ; $i++){ 	push (@$ids,"mz_0".sprintf("%04s", $i ) ); }
 }
 
 ## ---------------- launch queries -------------------- :
