@@ -146,11 +146,13 @@ if ( ( defined $out_tab ) and ( defined $results ) ) {
 	if (defined $masses_file) {
 		my $lm_matrix = undef ;
 		if ( ( defined $nbline_header ) and ( $header_choice eq 'yes' ) ) {
-			$lm_matrix = $ocsv->set_lm_matrix_object('hmdb', $masses, $results ) ;
+#			$lm_matrix = $ocsv->set_lm_matrix_object('hmdb', $masses, $results ) ;
+			$lm_matrix = $ocsv->set_hmdb_matrix_object_with_ids('hmdb', $masses, $results ) ;
 			$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix, $nbline_header-1) ;
 		}
 		elsif ( ( $header_choice eq 'no' ) ) {
-			$lm_matrix = $ocsv->set_lm_matrix_object(undef, $masses, $results ) ;
+#			$lm_matrix = $ocsv->set_lm_matrix_object(undef, $masses, $results ) ;
+			$lm_matrix = $ocsv->set_hmdb_matrix_object_with_ids(undef, $masses, $results ) ;
 			$lm_matrix = $ocsv->add_lm_matrix_to_input_matrix($complete_rows, $lm_matrix, 0) ;
 		}
 		$ocsv->write_csv_skel(\$out_tab, $lm_matrix) ;
