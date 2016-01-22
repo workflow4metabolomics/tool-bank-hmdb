@@ -10,7 +10,7 @@
             #if str($input_type.header.header_choice) == "yes":
                 -nblineheader "${$input_type.header.nbHeader}"
             #end if
-            -colid "${input_type.colid}" -colfactor "${input_type.colfactor}"
+            -colfactor "${input_type.colfactor}"
         #else:
             -mass "${input_type.mass}"
         #end if
@@ -34,7 +34,6 @@
             <param name="nbHeader" label="Number of header lines " type="integer" value="1" min="1" size="10" help="number of lines not containing masses"/>
           </when>
         </conditional>
-	    <param name="colid" label="Column of Id " type="data_column" data_ref="masses" accept_default="true" />
 	    <param name="colfactor" label="Column of masses " type="data_column" data_ref="masses" accept_default="true" />
       </when>
       <when value="NO">
@@ -103,8 +102,7 @@ Input files
 | 1 : File of masses      |  tabular  |
 +-------------------------+-----------+
 
-File of masses (Generally variable metadata file) must have at least the 2 following column : 
-	* Id : column to identify masses in the tsv input file
+File of masses (Generally variable metadata file) must have at least the following column : 
 	* Masses : column with all the masses in the tsv input file
 
 ----------
@@ -113,7 +111,7 @@ Parameters
 
 Would you use a file
 	| Choose whether the masses are in a file or entered manually
-	| YES (default) : parameters **File of masses ; Do you have a header ; Column of Id ; Column of masses** are visible
+	| YES (default) : parameters **File of masses ; Do you have a header ; Column of masses** are visible
 	| NO : parameter **Mass to submit** is visible
 	|
 
@@ -137,10 +135,6 @@ Number of header lines
 	|
 
 In all header cases :
-
-Column of Id
-	| Specify the column number for the id in the tsv input file
-	|
 
 Column of masses
 	| Specify the column number for the mass in the tsv input file

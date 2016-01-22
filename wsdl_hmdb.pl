@@ -39,7 +39,6 @@ my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, 
 				"masses:s"			=> \$masses_file,		## option : path to the input
 				"header_choice:s"	=> \$header_choice,		## Presence or not of header in tabular file
 				"nblineheader:i"	=> \$nbline_header,		## numbre of header line present in file
-				"colid:i"			=> \$col_id,			## Column id for retrieve formula/masses list in tabular file
 				"colfactor:i"		=> \$col_mass,			## Column id for retrieve formula list in tabular file
 				"delta:f"			=> \$delta,
 				"mode:s"			=> \$molecular_species,	## Molecular species (positive/negative/neutral) 
@@ -80,7 +79,7 @@ if ( ( defined $mass ) and ( $mass ne "" ) ) {
 	my @masses = split(" ", $mass);
 	$masses = \@masses ;
 	for (my $i=1 ; $i<=$#masses+1 ; $i++){
-		push (@$ids,"mass_0".$i );
+		push (@$ids,"mz_0".$i );
 	}
 } ## END IF
 ## manage csv file containing list of masses
@@ -90,12 +89,13 @@ elsif ( ( defined $masses_file ) and ( $masses_file ne "" ) and ( -e $masses_fil
 	my $complete_csv = $ocsv_input->get_csv_object( "\t" ) ;
 	$complete_rows = $ocsv_input->parse_csv_object($complete_csv, \$masses_file) ;
 	
-	## parse csv ids and masses
+	## parse masses and set ids
 	my $ocsv = lib::csv->new() ;
 	my $csv = $ocsv->get_csv_object( "\t" ) ;
 	if ( ( !defined $nbline_header ) or ( $nbline_header < 0 ) ) { $nbline_header = 0 ;	}
 	$masses = $ocsv->get_value_from_csv_multi_header( $csv, $masses_file, $col_mass, $header_choice, $nbline_header ) ; ## retrieve mz values on csv
-	$ids = $ocsv->get_value_from_csv_multi_header( $csv, $masses_file, $col_id, $header_choice, $nbline_header ) ; ## retrieve ids values on csv
+	my $nbmz = @$masses ;
+	for (my $i=1 ; $i<=$nbmz+1 ; $i++){ 	push (@$ids,"mz_0".$i ); }
 }
 
 ## ---------------- launch queries -------------------- :
