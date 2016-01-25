@@ -27,7 +27,7 @@ use lib::csv  qw( :ALL ) ;
 my ( $help ) = undef ;
 my ( $mass ) = undef ;
 my ( $masses_file, $col_id, $col_mass, $header_choice, $nbline_header ) = ( undef, undef, undef, undef, undef ) ;
-my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, undef ) ;
+my ( $delta, $molecular_species, $out_tab, $out_html, $out_xls ) = ( undef, undef, undef, undef, undef ) ;
 
 
 #=============================================================================
@@ -44,6 +44,7 @@ my ( $delta, $molecular_species, $out_tab, $out_html ) = ( undef, undef, undef, 
 				"mode:s"			=> \$molecular_species,	## Molecular species (positive/negative/neutral) 
 				"output|o:s"		=> \$out_tab,			## option : path to the ouput (tabular : input+results )
 				"view|v:s"			=> \$out_html,			## option : path to the results view (output2)
+				"outputxls:s"		=> \$out_xls,			## option : path to the xls-like format output
             ) ;
 
 #=============================================================================
@@ -165,6 +166,11 @@ else {
 	warn "Can't create a tabular output for HMDB : no result found or your output file is not defined\n" ;
 }
 
+## Write XLS like format
+if ( ( defined $out_xls ) and ( defined $results ) ) {
+	my $ocsv = lib::hmdb::new() ;
+	$ocsv->write_csv_one_mass($masses, $ids, $results, $out_xls) ;
+}
 
 
 #====================================================================================
