@@ -457,9 +457,10 @@ sub add_entries_to_tbody_object {
     		
     		my @anti_redondant = ('N/A') ;
     		my $check_rebond = 0 ;
+    		my $check_noentry = 0 ; 
     		
     		foreach my $entry (@{ $entries->[$index_mz_continous] }) {
-    			
+    			$check_noentry ++ ;
     			## dispo anti doublons des entries
     			foreach my $rebond (@anti_redondant) {
     				if ( $rebond eq $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_ID} ) {	$check_rebond = 1 ; last ; }
@@ -485,6 +486,20 @@ sub add_entries_to_tbody_object {
     			}
     			$check_rebond = 0 ; ## reinit double control
     			$index_entry++ ;	
+    		} ## end foreach
+    		if ($check_noentry == 0 ) {
+    			my %entry = (
+		    			ENTRY_COLOR => $tbody_object->[$index_page]{MASSES}[$index_mz]{MZ_COLOR},
+		   				ENTRY_ENTRY_ID => 'No_result_found_on_HMDB',
+		   				ENTRY_ENTRY_ID2 => '',
+						ENTRY_FORMULA => 'n/a',
+						ENTRY_CPD_MZ => 'n/a',
+						ENTRY_ADDUCT => 'n/a',
+						ENTRY_ADDUCT_TYPE => 'n/a',
+						ENTRY_ADDUCT_MZ => 'n/a',
+						ENTRY_DELTA => 0,   			
+		    		) ;
+		    		push ( @{ $tbody_object->[$index_page]{MASSES}[$index_mz]{ENTRIES} }, \%entry) ;
     		}
     		$index_mz ++ ;
     		$index_mz_continous ++ ;
