@@ -754,15 +754,18 @@ sub write_csv_one_mass {
     my $i = 0 ;
     	
     foreach my $id (@{$ids}) {
-    	my $mass = $masses->[$i] ;
+    	my $mass = undef ;
+    	if ( $masses->[$i] ) { 	$mass = $masses->[$i] ; 	}
+    	else {						last ; 					 	}
     	
     	if ( $results->[$i] ) { ## an requested id has a result in the list of hashes $results.
 
     		my @anti_redondant = ('N/A') ;
     		my $check_rebond = 0 ;
+    		my $check_noentry = 0 ;
     		
     		foreach my $entry (@{$results->[$i]}) {
-    			
+    			$check_noentry ++ ;
     			## dispo anti doublons des entries
 	    		foreach my $rebond (@anti_redondant) {
 	    			if ( $rebond eq $entry->{ENTRY_ENTRY_ID} ) { $check_rebond = 1 ; last ; }
@@ -787,6 +790,9 @@ sub write_csv_one_mass {
 	    			else { 							print CSV "N/A\n" ; }
 		    	}
 		    	$check_rebond = 0 ; ## reinit double control
+    		} ## end foreach
+    		if ($check_noentry == 0 ) {
+    			print CSV "$id\t$mass\t".'No_result_found_on HMDB'."\n" ;
     		}
     	}
     	$i++ ;
