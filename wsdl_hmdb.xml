@@ -15,7 +15,7 @@
             -mass "${input_type.mass}"
         #end if
         -delta "$delta" -mode "$mode"
-        -output "$variableMetadata" -view "$HmdbResView"
+        -output "$variableMetadata" -view "$HmdbResView" -outputxls "$HmdbResXls"
   </command>
   <inputs>
     <conditional name="input_type">
@@ -52,6 +52,7 @@
   <outputs>
     <data name="variableMetadata" format="tabular" label="${tool.name}_TSV"/>
     <data name="HmdbResView" format="html" label="${tool.name}_VIEW"/>
+    <data name="HmdbResXls" label="${tool.name}_XLS" format="tabular" />
   </outputs>
   
   <tests>
@@ -65,6 +66,7 @@
   		<param name="mode" value="neutral"/>
   		<output name="variableMetadata" file="out_test01.tsv"/>
   		<output name="HmdbResView" file="out_test01.html"/>
+  		<output name="HmdbResXls" file="out_test01.csv"/>
   	</test>
   	<test>
   		<!--test 02 : some results - with-mzrt-input-with-id file-->
@@ -76,6 +78,7 @@
   		<param name="mode" value="positive"/>
   		<output name="variableMetadata" file="out_test02.tsv"/>
   		<output name="HmdbResView" file="out_test02.html"/>
+  		<output name="HmdbResXls" file="out_test02.csv"/>
   	</test>
   </tests>
 
