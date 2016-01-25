@@ -610,7 +610,7 @@ sub set_lm_matrix_object {
 	    	$check_rebond = 0 ; ## reinit double control
 	    	$index_entries++ ;
 	    } ## end foreach
-	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on HMDB' ; }
+	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on_HMDB' ; }
     	push (@clusters, $cluster_col) ;
     	push (@hmdb_matrix, \@clusters) ;
     	$index_mz++ ;
@@ -676,7 +676,7 @@ sub set_hmdb_matrix_object_with_ids {
 	    	$check_rebond = 0 ; ## reinit double control
 	    	$index_entries++ ;
 	    } ## end foreach
-	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on HMDB' ; }
+	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on_HMDB' ; }
     	push (@clusters, $cluster_col) ;
     	push (@hmdb_matrix, \@clusters) ;
     	$index_mz++ ;
@@ -807,7 +807,7 @@ sub write_csv_one_mass {
 		    	$check_rebond = 0 ; ## reinit double control
     		} ## end foreach
     		if ($check_noentry == 0 ) {
-    			print CSV "$id\t$mass\t".'No_result_found_on HMDB'."\n" ;
+    			print CSV "$id\t$mass\t".'No_result_found_on_HMDB'."\tn/a\tn/a\t0\n" ;
     		}
     	}
     	$i++ ;
