@@ -80,6 +80,15 @@
   		<output name="HmdbResView" file="out_test02.html"/>
   		<output name="HmdbResXls" file="out_test02.csv"/>
   	</test>
+  	<test>
+  		<!--test 03 : some results - with-mz list in manual mass mode-->
+  		<param name="mass" value="175.01 238.19 420.16 780.32 956.25 1100.45"/>
+  		<param name="delta" value="0.05"/>
+  		<param name="mode" value="positive"/>
+  		<output name="variableMetadata" file="out_test03.tsv"/>
+  		<output name="HmdbResView" file="out_test03.html"/>
+  		<output name="HmdbResXls" file="out_test03.csv"/>
+  	</test>
   </tests>
 
   <help>
