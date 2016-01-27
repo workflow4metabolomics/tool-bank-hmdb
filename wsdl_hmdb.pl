@@ -76,7 +76,7 @@ my $search_condition = "Search params : Molecular specie = $molecular_species / 
 ## --------------- retrieve input data -------------- :
 
 ## manage only one mass
-if ( ( defined $mass ) and ( $mass ne "" ) ) {
+if ( ( defined $mass ) and ( $mass ne '' ) ) {
 	my @masses = split(" ", $mass);
 	$masses = \@masses ;
 	for (my $i=1 ; $i<=$#masses+1 ; $i++){ push (@$ids,"mz_0".sprintf("%04s", $i ) ); }
@@ -95,6 +95,10 @@ elsif ( ( defined $masses_file ) and ( $masses_file ne "" ) and ( -e $masses_fil
 	$masses = $ocsv->get_value_from_csv_multi_header( $csv, $masses_file, $col_mass, $header_choice, $nbline_header ) ; ## retrieve mz values on csv
 	my $nbmz = @$masses ;
 	for (my $i=1 ; $i<=$nbmz+1 ; $i++){ 	push (@$ids,"mz_0".sprintf("%04s", $i ) ); }
+}
+else {
+	warn "[warning] Input data are missing : none mass or file of masses\n" ;
+	&help ;
 }
 
 ## ---------------- launch queries -------------------- :
@@ -181,14 +185,15 @@ if ( ( defined $out_xls ) and ( defined $results ) ) {
 #====================================================================================
 sub help {
 	print STDERR "
-wsdl_hmdb
+help of wsdl_hmdb
 
 # wsdl_hmdb is a script to query HMDB website using mz and return a list of candidates sent by HMDB based on the ms search tool.
 # Input : formula or list of formula
 # Author : Franck Giacomoni and Marion Landi
 # Email : fgiacomoni\@clermont.inra.fr
-# Version : 1.0
+# Version : 1.4
 # Created : 08/07/2012
+# Updated : 21/01/2016
 USAGE :		 
 		wsdl_hmdb.pl 	-mass [one mass or a string list of exact masses] -delta [mz delta] -mode [molecular species: positive|negative|neutral] -output [output tabular file] -view [output html file] 
 		
@@ -245,12 +250,12 @@ This program is free software; you can redistribute it and/or modify it under th
 
 =head1 VERSION
 
-version 1 : 06 / 06 / 2013
+version 1.0 : 06 / 06 / 2013
 
-version 2 : 27 / 01 / 2014
+version 1.2 : 27 / 01 / 2014
 
-version 3 : 19 / 11 / 2014
+version 1.3 : 19 / 11 / 2014
 
-version 4 : 21 / 01 / 2016 - a clean version for community
+version 1.4 : 21 / 01 / 2016 - a clean version for community
 
 =cut
