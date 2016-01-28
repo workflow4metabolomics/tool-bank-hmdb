@@ -1,5 +1,5 @@
 ## ****** HMDB environnemnt : ****** ##
-# version December 2014 M Landi / F Giacomoni
+# version January 2016 M Landi / F Giacomoni - INRA - METABOHUB - workflow4metabolomics.org core team
 
 ## --- PERL compilator / libraries : --- ##
 $ perl -v
@@ -28,7 +28,7 @@ cpan> install URI::URL
 cpan> install SOAP::Lite
 cpan>  install HTML::Template
 
-# libs pfem PERL : this lib were included in local. NO PATH TO CHANGE !!!
+# libs pfem PERL : this lib were included in lib dir.
 use conf::conf  qw( :ALL ) ;
 use formats::csv  qw( :ALL ) ;
 --
@@ -42,10 +42,7 @@ No interaction with binary - use only HMDB post method (http://www.hmdb.ca/spect
 --
 
 ## --- Config : --- ##
-!!! EDIT THE FOLLOWING LINES in the config file : ~/metabolomics/Identification/Banks_Queries/HMDB/conf_hmdb.cfg
-JS_GALAXY_PATH=http://YOUR_GALAXY_HOSTNAME/static/scripts/libs/outputs
-CSS_GALAXY_PATH=http://YOUR_GALAXY_HOSTNAME/static/style
-HTML_TEMPLATE=absolute_path_to_/hmdb.tmpl
+JS and CSS (used in HTML output format) are now hosted on cdn.rawgit.com server - no local config needed
 
 
 PS :If Galaxy can't find the file "hmdb.tmpl", perform this command line : perl -pi -e 's/\r//g' conf_hmdb.cfg
@@ -56,16 +53,13 @@ one image :
 hmdb.png
 --
 
-## --- DATASETS --- ##
-No data set ! waiting for galaxy pages
+## --- DATASETS OR TUTORIAL --- ##
+Please find help on W4M : 
 --
 
 ## --- ??? COMMENTS ??? --- ##
 If Galaxy can't find the file "hmdb.tmpl", perform this command line : " perl -pi -e 's/\r//g' " on the conf file "conf_hmdb.cfg".
 
-To use full funtionalities of html output files : 
+To use fully functionalities of HTML output format file : 
   - check that sanitize_all_html option in universe_wsgi.ini file is uncomment and set to FALSE.
-  - copy the following JS files in YOUR_GALAXY_PATH/static/scripts/libs/outputs/ : jquery.simplePagination.js
-  - copy the following CSS files in YOUR_GALAXY_PATH/static/style/ : simplePagination.css
- Their files (pfem-js and pfem-css) are available in the ABIMS toolshed "Tool Dependency Packages" category.
 --
