@@ -1,4 +1,4 @@
-<tool id="wsdl_hmdb" name="HMDB MS search" version="2014-12-11">
+<tool id="wsdl_hmdb" name="HMDB MS search" version="2016-01-28">
   <description>
         search by masses on HMDB online bank
   </description>
