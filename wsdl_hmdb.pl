@@ -146,7 +146,7 @@ if ( ( defined $out_html ) and ( defined $results ) ) {
 	
 } ## END IF
 else {
-#	croak "Can't create a HTML output for HMDB : no result found or your output file is not defined\n" ;
+	warn "Can't create a HTML output for HMDB : no result found or your output file is not defined\n" ;
 }
 
 if ( ( defined $out_tab ) and ( defined $results ) ) {
