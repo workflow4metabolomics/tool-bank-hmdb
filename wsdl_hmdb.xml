@@ -1,4 +1,4 @@
-<tool id="wsdl_hmdb" name="HMDB MS search" version="2014-12-11">
+<tool id="wsdl_hmdb" name="HMDB MS search" version="2016-01-28">
   <description>
         search by masses on HMDB online bank
   </description>
@@ -58,6 +58,7 @@
   <tests>
   	<test>
   		<!--test 01 no result - fake-mzrt-input-with-id -->
+  		<param name="choice" value="YES"/>
   		<param name="masses" value="input_test01_fake-mzrt-input-with-id.tsv"/>
   		<param name="header_choice" value="yes"/>
   		<param name="nblineheader" value="1"/>
@@ -70,6 +71,7 @@
   	</test>
   	<test>
   		<!--test 02 : some results - with-mzrt-input-with-id file-->
+  		<param name="choice" value="YES"/>
   		<param name="masses" value="input_test02_mzrt-input-with-id.tsv"/>
   		<param name="header_choice" value="yes"/>
   		<param name="nblineheader" value="1"/>
@@ -82,6 +84,7 @@
   	</test>
   	<test>
   		<!--test 03 : some results - with-mz list in manual mass mode-->
+  		<param name="choice" value="NO"/>
   		<param name="mass" value="175.01 238.19 420.16 780.32 956.25 1100.45"/>
   		<param name="delta" value="0.05"/>
   		<param name="mode" value="positive"/>
