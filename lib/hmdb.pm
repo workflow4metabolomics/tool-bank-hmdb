@@ -77,6 +77,10 @@ sub extract_sub_mz_lists {
     my $nb_mz = 0 ;
     my $nb_total_mzs = scalar(@{$masses}) ;
     
+    if ($nb_total_mzs == 0) {
+    	die "The provided mzs list is empty" ;
+    }
+    
     for ( my $current_pos = 0 ; $current_pos < $nb_total_mzs ; $current_pos++ ) {
     	
     	if ( $nb_mz < $HMDB_LIMITS ) {
@@ -113,7 +117,7 @@ sub prepare_multi_masses_query {
     if ( defined $masses ) {
     	my @masses = @{$masses} ;
     	my $nb_masses = scalar ( @masses ) ;
-    	if ( $nb_masses == 0 ) { croak "Your mass list is empty \n" ; }
+    	if ( $nb_masses == 0 ) { croak "The input method parameter mass list is empty" ; }
     	elsif ( $nb_masses >= 150 ) { croak "Your mass list is too long : HMDB allows maximum 150 query masses per request \n" ; } ## Del it --- temporary patch
 	    
 	    foreach my $mass (@masses) {
