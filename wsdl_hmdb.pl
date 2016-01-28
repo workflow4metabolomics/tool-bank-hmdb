@@ -111,6 +111,10 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 	$results = [] ; # prepare arrays ref
 	my $submasses = $oHmdb->extract_sub_mz_lists($masses, $CONF->{HMDB_LIMITS} ) ;
 	
+	## get the hmdb server status by a test query - continuous queries or kill script.
+	my $status = $oHmdb->test_matches_from_hmdb_ua() ;
+	$oHmdb->check_state_from_hmdb_ua($status) ; ## can kill the script execution
+
 	foreach my $mzs ( @{$submasses} ) {
 		
 		my $result = undef ;
