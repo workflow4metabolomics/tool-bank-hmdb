@@ -10,12 +10,12 @@
             #if str($input_type.header.header_choice) == "yes":
                 -nblineheader "${$input_type.header.nbHeader}"
             #end if
-            -colid "${input_type.colid}" -colfactor "${input_type.colfactor}"
+            -colfactor "${input_type.colfactor}"
         #else:
             -mass "${input_type.mass}"
         #end if
         -delta "$delta" -mode "$mode"
-        -output "$variableMetadata" -view "$HmdbResView"
+        -output "$variableMetadata" -view "$HmdbResView" -outputxls "$HmdbResXls"
   </command>
   <inputs>
     <conditional name="input_type">
@@ -34,7 +34,6 @@
             <param name="nbHeader" label="Number of header lines " type="integer" value="1" min="1" size="10" help="number of lines not containing masses"/>
           </when>
         </conditional>
-	    <param name="colid" label="Column of Id " type="data_column" data_ref="masses" accept_default="true" />
 	    <param name="colfactor" label="Column of masses " type="data_column" data_ref="masses" accept_default="true" />
       </when>
       <when value="NO">
@@ -42,7 +41,7 @@
       </when>
     </conditional>
     
-    <param name="delta" label="Molecular Weight Tolerance +/- " type="float" value="0.05" min="0" max="10" size="10" help="Default value is 0.05 for HMDB (Da)"/>
+    <param name="delta" label="Mass-to-charge ratio " type="float" value="0.05" min="0" max="10" size="10" help="Default value is 0.05 for HMDB (mass-to-charge ratio)"/>
     <param name="mode" label="Molecular Species " type="select" display="radio" help="">
       <option value="positive">Positif Mode</option>
       <option value="negative">Negatif Mode</option>
@@ -53,7 +52,44 @@
   <outputs>
     <data name="variableMetadata" format="tabular" label="${tool.name}_TSV"/>
     <data name="HmdbResView" format="html" label="${tool.name}_VIEW"/>
+    <data name="HmdbResXls" label="${tool.name}_XLS" format="tabular" />
   </outputs>
+  
+  <tests>
+  	<test>
+  		<!--test 01 no result - fake-mzrt-input-with-id -->
+  		<param name="masses" value="input_test01_fake-mzrt-input-with-id.tsv"/>
+  		<param name="header_choice" value="yes"/>
+  		<param name="nblineheader" value="1"/>
+  		<param name="colfactor" value="2"/>
+  		<param name="delta" value="0.001"/>
+  		<param name="mode" value="neutral"/>
+  		<output name="variableMetadata" file="out_test01.tsv"/>
+  		<output name="HmdbResView" file="out_test01.html"/>
+  		<output name="HmdbResXls" file="out_test01.csv"/>
+  	</test>
+  	<test>
+  		<!--test 02 : some results - with-mzrt-input-with-id file-->
+  		<param name="masses" value="input_test02_mzrt-input-with-id.tsv"/>
+  		<param name="header_choice" value="yes"/>
+  		<param name="nblineheader" value="1"/>
+  		<param name="colfactor" value="2"/>
+  		<param name="delta" value="0.001"/>
+  		<param name="mode" value="positive"/>
+  		<output name="variableMetadata" file="out_test02.tsv"/>
+  		<output name="HmdbResView" file="out_test02.html"/>
+  		<output name="HmdbResXls" file="out_test02.csv"/>
+  	</test>
+  	<test>
+  		<!--test 03 : some results - with-mz list in manual mass mode-->
+  		<param name="mass" value="175.01 238.19 420.16 780.32 956.25 1100.45"/>
+  		<param name="delta" value="0.05"/>
+  		<param name="mode" value="positive"/>
+  		<output name="variableMetadata" file="out_test03.tsv"/>
+  		<output name="HmdbResView" file="out_test03.html"/>
+  		<output name="HmdbResXls" file="out_test03.csv"/>
+  	</test>
+  </tests>
 
   <help>
 
@@ -103,8 +139,7 @@ Input files
 | 1 : File of masses      |  tabular  |
 +-------------------------+-----------+
 
-File of masses (Generally variable metadata file) must have at least the 2 following column : 
-	* Id : column to identify masses in the tsv input file
+File of masses (Generally variable metadata file) must have at least the following column : 
 	* Masses : column with all the masses in the tsv input file
 
 ----------
@@ -113,7 +148,7 @@ Parameters
 
 Would you use a file
 	| Choose whether the masses are in a file or entered manually
-	| YES (default) : parameters **File of masses ; Do you have a header ; Column of Id ; Column of masses** are visible
+	| YES (default) : parameters **File of masses ; Do you have a header ; Column of masses** are visible
 	| NO : parameter **Mass to submit** is visible
 	|
 
@@ -138,10 +173,6 @@ Number of header lines
 
 In all header cases :
 
-Column of Id
-	| Specify the column number for the id in the tsv input file
-	|
-
 Column of masses
 	| Specify the column number for the mass in the tsv input file
 	|
@@ -159,8 +190,8 @@ Mass to submit
 
 In all cases :
 
-Molecular Weight Tolerance
-	| Specify a delta (Da) to apply on mass - This value is a float, between 0.0000000000000001 and 10.
+Mass-to-charge ratio
+	| Specify a delta (mass-to-charge ratio) to apply on mass - This value is a float, between 0.0000000000000001 and 10.
 	|
 
 Molecular Species
@@ -190,7 +221,15 @@ Working example
 
 .. class:: warningmark
 
-The corresponding "Page" is coming soon.
+Refer to the corresponding `"W4M HowTo" &lt;http://workflow4metabolomics.org/howto&gt;`_ page:
+ | Format Data For Postprocessing
+ | Perform LCMS Annotations
+
+.. class:: warningmark
+
+And their "W4M courses 2015":
+ | Using Galaxy4Metabolomics - W4M table format for Galaxy
+ | Annotation Banks - Annotation  
 	
 
 	</help>

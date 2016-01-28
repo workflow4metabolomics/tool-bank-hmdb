@@ -18,8 +18,8 @@ use vars qw($VERSION @ISA @EXPORT %EXPORT_TAGS);
 
 our $VERSION = "1.0";
 our @ISA = qw(Exporter);
-our @EXPORT = qw( prepare_multi_masses_query );
-our %EXPORT_TAGS = ( ALL => [qw( prepare_multi_masses_query  )] );
+our @EXPORT = qw( extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass );
+our %EXPORT_TAGS = ( ALL => [qw( extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass )] );
 
 =head1 NAME
 
@@ -77,6 +77,10 @@ sub extract_sub_mz_lists {
     my $nb_mz = 0 ;
     my $nb_total_mzs = scalar(@{$masses}) ;
     
+    if ($nb_total_mzs == 0) {
+    	die "The provided mzs list is empty" ;
+    }
+    
     for ( my $current_pos = 0 ; $current_pos < $nb_total_mzs ; $current_pos++ ) {
     	
     	if ( $nb_mz < $HMDB_LIMITS ) {
@@ -94,7 +98,7 @@ sub extract_sub_mz_lists {
 
 =head2 METHOD prepare_multi_masses_query
 
-	## Description : permet de generer une liste de masses au format d'interrogation de hmdb
+	## Description : Generate the adapted format of the mz list for HMDB
 	## Input : $masses
 	## Output : $hmdb_masses
 	## Usage : my ( $hmdb_masses ) = prepare_multi_masses_query( $masses ) ;
@@ -113,7 +117,7 @@ sub prepare_multi_masses_query {
     if ( defined $masses ) {
     	my @masses = @{$masses} ;
     	my $nb_masses = scalar ( @masses ) ;
-    	if ( $nb_masses == 0 ) { croak "Your mass list is empty \n" ; }
+    	if ( $nb_masses == 0 ) { croak "The input method parameter mass list is empty" ; }
     	elsif ( $nb_masses >= 150 ) { croak "Your mass list is too long : HMDB allows maximum 150 query masses per request \n" ; } ## Del it --- temporary patch
 	    
 	    foreach my $mass (@masses) {
@@ -137,43 +141,73 @@ sub prepare_multi_masses_query {
 }
 ## END of SUB
 
-=head2 METHOD get_matches_from_hmdb
+=head2 METHOD test_matches_from_hmdb_ua
 
-	## Description : permet de requeter sur hmdb avec une masse, un delta de masse sur la banque de metabolites hmdb
-	## Input : $mass, $delta, $mode
-	## Output : $results
-	## Usage : my ( $results ) = get_matches_from_hmdb( $mass, $delta, $mode ) ;
+	## Description : test a single query with tests parameters on hmdb - get the status of the complete server infra.
+	## Input : none
+	## Output : $status_line
+	## Usage : my ( $status_line ) = test_matches_from_hmdb_ua( ) ;
 	
 =cut
 ## START of SUB
-sub get_matches_from_hmdb {
+sub test_matches_from_hmdb_ua {
 	## Retrieve Values
     my $self = shift ;
-    my ( $mass, $delta, $mode ) = @_ ;
     
-    my @pages = () ;
-    my $page = undef ;
+    my @page = () ;
+
+	my $ua = new LWP::UserAgent;
+	$ua->agent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36");
+	 
+	my $req = HTTP::Request->new(
+	    POST => 'http://specdb.wishartlab.com/ms/search.csv');
+	
+	$req->content_type('application/x-www-form-urlencoded');
+	$req->content('utf8=TRUE&mode=positive&query_masses=420.159317&tolerance=0.000001&database=HMDB&commit=Download Results As CSV');
+	 
+	my $res = $ua->request($req);
+#	print $res->as_string;
+	my $status_line = $res->status_line ;
+	($status_line) = ($status_line =~ /(\d+)/);
+	
+	
+	return (\$status_line) ;
+}
+## END of SUB
+
+=head2 METHOD check_state_from_hmdb_ua
+
+	## Description : check the thhp status of hmdb and kill correctly the script if necessary.
+	## Input : $status
+	## Output : none
+	## Usage : check_state_from_hmdb_ua($status) ;
+	
+=cut
+## START of SUB
+sub check_state_from_hmdb_ua {
+	## Retrieve Values
+    my $self = shift ;
+    my ($status) = @_ ;
     
-    if ( (defined $mass) and (defined $delta) and (defined $mode) ) {
-    	my $url = 'http://www.hmdb.ca/spectra/spectra/ms/search?utf8=TRUE&query_masses='.$mass.'&tolerance='.$delta.'&mode='.$mode.'&commit=Search' ;
-    	
-#    	print $url."\n" ;
-	    
-	    my $oUrl = url($url);
-	    $page = get($oUrl);
-#	    print $page."\n" ;
-	    
-	    ## manage output
-	    if ( ( !defined $page ) or ( $page eq "" ) ) {	die "Problem to connect to HMDB, page empty or undefined.\n" ; }
-	    else { 					@pages = split(/\n/, $page); 	    }
+    if (!defined $$status) {
+    	croak "No http status is defined for the distant server" ;
     }
-    return(\@pages) ;
+    else {
+    	unless ( $$status == 200 ) { 
+    		if  ( $$status == 504 ) { croak "Gateway Timeout: The HMDB server was acting as a gateway or proxy and did not receive a timely response from the upstream server" ; }
+    		else {
+    			## None supported http code error ##
+    		}
+    	}
+    }
+    
+    return (1) ;
 }
 ## END of SUB
 
 =head2 METHOD get_matches_from_hmdb_ua
 
-	## Description : permet de requeter via un user agent sur hmdb avec une masse, un delta de masse sur la banque de metabolites hmdb
+	## Description : HMDB querying via an user agent with parameters : mz, delta and molecular species (neutral, pos, neg)
 	## Input : $mass, $delta, $mode
 	## Output : $results
 	## Usage : my ( $results ) = get_matches_from_hmdb( $mass, $delta, $mode ) ;
@@ -211,8 +245,6 @@ sub get_matches_from_hmdb_ua {
 }
 ## END of SUB
 
-
-
 =head2 METHOD parse_hmdb_csv_results
 
 	## Description : parse the csv results and get data
@@ -233,7 +265,7 @@ sub parse_hmdb_csv_results {
     my %result_by_entry = () ;
     my %features = () ;
     
-    print Dumper $csv ;
+#    print Dumper $csv ;
     
     foreach my $line (@{$csv}) {
     	
@@ -269,9 +301,9 @@ sub parse_hmdb_csv_results {
 }
 ## END of SUB
 
-=head2 METHOD parse_hmdb_page_results
+=head2 METHOD parse_hmdb_page_results 
 
-	## Description : permet de parser le contenu des resultats hmdb
+	## Description : [DEPRECATED] old HMDB html page parser
 	## Input : $page
 	## Output : $results
 	## Usage : my ( $results ) = parse_hmdb_page_result( $pages ) ;
@@ -350,7 +382,7 @@ sub parse_hmdb_page_results {
 
 =head2 METHOD set_html_tbody_object
 
-	## Description : initializes and build the tbody object (perl array) need to html template
+	## Description : initializes and build the tbody object (perl array) needed to html template
 	## Input : $nb_pages, $nb_items_per_page
 	## Output : $tbody_object
 	## Usage : my ( $tbody_object ) = set_html_tbody_object($nb_pages, $nb_items_per_page) ;
@@ -378,7 +410,7 @@ sub set_html_tbody_object {
 
 =head2 METHOD add_mz_to_tbody_object
 
-	## Description : initializes and build the mz object (perl array) need to html template
+	## Description : initializes and build the mz object (perl array) needed to html template
 	## Input : $tbody_object, $nb_items_per_page, $mz_list
 	## Output : $tbody_object
 	## Usage : my ( $tbody_object ) = add_mz_to_tbody_object( $tbody_object, $nb_items_per_page, $mz_list ) ;
@@ -432,7 +464,7 @@ sub add_mz_to_tbody_object {
 
 =head2 METHOD add_entries_to_tbody_object
 
-	## Description : initializes and build the mz object (perl array) need to html template
+	## Description : initializes and build the entries object (perl array) needed to html template
 	## Input : $tbody_object, $nb_items_per_page, $mz_list, $entries
 	## Output : $tbody_object
 	## Usage : my ( $tbody_object ) = add_entries_to_tbody_object( $tbody_object, $nb_items_per_page, $mz_list, $entries ) ;
@@ -457,9 +489,10 @@ sub add_entries_to_tbody_object {
     		
     		my @anti_redondant = ('N/A') ;
     		my $check_rebond = 0 ;
+    		my $check_noentry = 0 ; 
     		
     		foreach my $entry (@{ $entries->[$index_mz_continous] }) {
-    			
+    			$check_noentry ++ ;
     			## dispo anti doublons des entries
     			foreach my $rebond (@anti_redondant) {
     				if ( $rebond eq $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_ID} ) {	$check_rebond = 1 ; last ; }
@@ -485,6 +518,20 @@ sub add_entries_to_tbody_object {
     			}
     			$check_rebond = 0 ; ## reinit double control
     			$index_entry++ ;	
+    		} ## end foreach
+    		if ($check_noentry == 0 ) {
+    			my %entry = (
+		    			ENTRY_COLOR => $tbody_object->[$index_page]{MASSES}[$index_mz]{MZ_COLOR},
+		   				ENTRY_ENTRY_ID => 'No_result_found_on_HMDB',
+		   				ENTRY_ENTRY_ID2 => '',
+						ENTRY_FORMULA => 'n/a',
+						ENTRY_CPD_MZ => 'n/a',
+						ENTRY_ADDUCT => 'n/a',
+						ENTRY_ADDUCT_TYPE => 'n/a',
+						ENTRY_ADDUCT_MZ => 'n/a',
+						ENTRY_DELTA => 0,   			
+		    		) ;
+		    		push ( @{ $tbody_object->[$index_page]{MASSES}[$index_mz]{ENTRIES} }, \%entry) ;
     		}
     		$index_mz ++ ;
     		$index_mz_continous ++ ;
@@ -595,7 +642,73 @@ sub set_lm_matrix_object {
 	    	$check_rebond = 0 ; ## reinit double control
 	    	$index_entries++ ;
 	    } ## end foreach
-	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on HMDB' ; }
+	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on_HMDB' ; }
+    	push (@clusters, $cluster_col) ;
+    	push (@hmdb_matrix, \@clusters) ;
+    	$index_mz++ ;
+    }
+    return(\@hmdb_matrix) ;
+}
+## END of SUB
+
+=head2 METHOD set_hmdb_matrix_object_with_ids
+
+	## Description : build the hmdb_row under its ref form (IDS only)
+	## Input : $header, $init_mzs, $entries
+	## Output : $hmdb_matrix
+	## Usage : my ( $hmdb_matrix ) = set_hmdb_matrix_object_with_ids( $header, $init_mzs, $entries ) ;
+	
+=cut
+## START of SUB
+sub set_hmdb_matrix_object_with_ids {
+	## Retrieve Values
+    my $self = shift ;
+    my ( $header, $init_mzs, $entries ) = @_ ;
+    
+    my @hmdb_matrix = () ;
+    
+    if ( defined $header ) {
+    	my @headers = () ;
+    	push @headers, $header ;
+    	push @hmdb_matrix, \@headers ;
+    }
+    
+    my $index_mz = 0 ;
+    
+    foreach my $mz ( @{$init_mzs} ) {
+    	
+    	my $index_entries = 0 ;
+    	my @clusters = () ;
+    	my $cluster_col = undef ;
+    	
+    	my @anti_redondant = ('N/A') ;
+    	my $check_rebond = 0 ;
+    	
+    	my $nb_entries = scalar (@{ $entries->[$index_mz] }) ;
+    	    	
+    	foreach my $entry (@{ $entries->[$index_mz] }) {
+    		
+    		## dispo anti doublons des entries
+    		foreach my $rebond (@anti_redondant) {
+    			if ( $rebond eq $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID} ) {	$check_rebond = 1 ; last ; }
+    		}
+	    	
+	    	if ( $check_rebond == 0 ) {
+    				
+	    		push ( @anti_redondant, $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID} ) ;
+	    		my $hmdb_id = $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID}  ;
+		    	
+		    	## METLIN data display model -- IDs ONLY !!
+		   		## entry1=VAR1::VAR2::VAR3::VAR4|entry2=VAR1::VAR2::VAR3::VAR4|...
+		   		# manage final pipe
+		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $hmdb_id.'|' ; }
+		   		else { 						   			$cluster_col .= $hmdb_id ; 	}
+	    		
+	    	}
+	    	$check_rebond = 0 ; ## reinit double control
+	    	$index_entries++ ;
+	    } ## end foreach
+	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on_HMDB' ; }
     	push (@clusters, $cluster_col) ;
     	push (@hmdb_matrix, \@clusters) ;
     	$index_mz++ ;
@@ -670,7 +783,7 @@ sub write_csv_skel {
 
 =head2 METHOD write_csv_one_mass
 
-	## Description : permet de print un fichier cvs
+	## Description : print a cvs file
 	## Input : $masses, $ids, $results, $file
 	## Output : N/A
 	## Usage : write_csv_one_mass( $ids, $results, $file ) ;
@@ -681,22 +794,25 @@ sub write_csv_one_mass {
 	## Retrieve Values
     my $self = shift ;
     my ( $masses, $ids, $results, $file,  ) = @_ ;
-    
+
     open(CSV, '>:utf8', "$file") or die "Cant' create the file $file\n" ;
     print CSV "ID\tMASS_SUBMIT\tHMDB_ID\tCPD_FORMULA\tCPD_MW\tDELTA\n" ;
     	
     my $i = 0 ;
     	
     foreach my $id (@{$ids}) {
-    	my $mass = $masses->[$i] ;
+    	my $mass = undef ;
+    	if ( $masses->[$i] ) { 	$mass = $masses->[$i] ; 	}
+    	else {						last ; 					 	}
     	
     	if ( $results->[$i] ) { ## an requested id has a result in the list of hashes $results.
 
     		my @anti_redondant = ('N/A') ;
     		my $check_rebond = 0 ;
+    		my $check_noentry = 0 ;
     		
     		foreach my $entry (@{$results->[$i]}) {
-    			
+    			$check_noentry ++ ;
     			## dispo anti doublons des entries
 	    		foreach my $rebond (@anti_redondant) {
 	    			if ( $rebond eq $entry->{ENTRY_ENTRY_ID} ) { $check_rebond = 1 ; last ; }
@@ -721,6 +837,9 @@ sub write_csv_one_mass {
 	    			else { 							print CSV "N/A\n" ; }
 		    	}
 		    	$check_rebond = 0 ; ## reinit double control
+    		} ## end foreach
+    		if ($check_noentry == 0 ) {
+    			print CSV "$id\t$mass\t".'No_result_found_on_HMDB'."\tn/a\tn/a\t0\n" ;
     		}
     	}
     	$i++ ;
@@ -745,7 +864,7 @@ You can find documentation for this module with the perldoc command.
 
 =over 4
 
-=item :ALL is prepare_multi_masses_query
+=item :ALL is ...
 
 =back
 
@@ -764,5 +883,7 @@ version 1 : 06 / 06 / 2013
 version 2 : 27 / 01 / 2014
 
 version 3 : 19 / 11 / 2014
+
+version 4 : 28 / 01 / 2016
 
 =cut
