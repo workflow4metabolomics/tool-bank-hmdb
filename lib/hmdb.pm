@@ -18,8 +18,8 @@ use vars qw($VERSION @ISA @EXPORT %EXPORT_TAGS);
 
 our $VERSION = "1.0";
 our @ISA = qw(Exporter);
-our @EXPORT = qw( prepare_multi_masses_query );
-our %EXPORT_TAGS = ( ALL => [qw( prepare_multi_masses_query  )] );
+our @EXPORT = qw( extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass );
+our %EXPORT_TAGS = ( ALL => [qw( extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass )] );
 
 =head1 NAME
 
@@ -141,37 +141,67 @@ sub prepare_multi_masses_query {
 }
 ## END of SUB
 
-=head2 METHOD get_matches_from_hmdb
+=head2 METHOD test_matches_from_hmdb_ua
 
-	## Description : permet de requeter sur hmdb avec une masse, un delta de masse sur la banque de metabolites hmdb
-	## Input : $mass, $delta, $mode
-	## Output : $results
-	## Usage : my ( $results ) = get_matches_from_hmdb( $mass, $delta, $mode ) ;
+	## Description : test a single query with tests parameters on hmdb - get the status of the complete server infra.
+	## Input : none
+	## Output : $status_line
+	## Usage : my ( $status_line ) = test_matches_from_hmdb_ua( ) ;
 	
 =cut
 ## START of SUB
-sub get_matches_from_hmdb {
+sub test_matches_from_hmdb_ua {
 	## Retrieve Values
     my $self = shift ;
-    my ( $mass, $delta, $mode ) = @_ ;
     
-    my @pages = () ;
-    my $page = undef ;
+    my @page = () ;
+
+	my $ua = new LWP::UserAgent;
+	$ua->agent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36");
+	 
+	my $req = HTTP::Request->new(
+	    POST => 'http://specdb.wishartlab.com/ms/search.csv');
+	
+	$req->content_type('application/x-www-form-urlencoded');
+	$req->content('utf8=TRUE&mode=positive&query_masses=420.159317&tolerance=0.000001&database=HMDB&commit=Download Results As CSV');
+	 
+	my $res = $ua->request($req);
+#	print $res->as_string;
+	my $status_line = $res->status_line ;
+	($status_line) = ($status_line =~ /(\d+)/);
+	
+	
+	return (\$status_line) ;
+}
+## END of SUB
+
+=head2 METHOD check_state_from_hmdb_ua
+
+	## Description : check the thhp status of hmdb and kill correctly the script if necessary.
+	## Input : $status
+	## Output : none
+	## Usage : check_state_from_hmdb_ua($status) ;
+	
+=cut
+## START of SUB
+sub check_state_from_hmdb_ua {
+	## Retrieve Values
+    my $self = shift ;
+    my ($status) = @_ ;
     
-    if ( (defined $mass) and (defined $delta) and (defined $mode) ) {
-    	my $url = 'http://www.hmdb.ca/spectra/spectra/ms/search?utf8=TRUE&query_masses='.$mass.'&tolerance='.$delta.'&mode='.$mode.'&commit=Search' ;
-    	
-#    	print $url."\n" ;
-	    
-	    my $oUrl = url($url);
-	    $page = get($oUrl);
-#	    print $page."\n" ;
-	    
-	    ## manage output
-	    if ( ( !defined $page ) or ( $page eq "" ) ) {	die "Problem to connect to HMDB, page empty or undefined.\n" ; }
-	    else { 					@pages = split(/\n/, $page); 	    }
+    if (!defined $$status) {
+    	croak "No http status is defined for the distant server" ;
     }
-    return(\@pages) ;
+    else {
+    	unless ( $$status == 200 ) { 
+    		if  ( $$status == 504 ) { croak "Gateway Timeout: The HMDB server was acting as a gateway or proxy and did not receive a timely response from the upstream server" ; }
+    		else {
+    			## None supported http code error ##
+    		}
+    	}
+    }
+    
+    return (1) ;
 }
 ## END of SUB
 
@@ -271,7 +301,7 @@ sub parse_hmdb_csv_results {
 }
 ## END of SUB
 
-=head2 METHOD parse_hmdb_page_results
+=head2 METHOD parse_hmdb_page_results 
 
 	## Description : [DEPRECATED] old HMDB html page parser
 	## Input : $page
@@ -764,7 +794,7 @@ sub write_csv_one_mass {
 	## Retrieve Values
     my $self = shift ;
     my ( $masses, $ids, $results, $file,  ) = @_ ;
-    
+
     open(CSV, '>:utf8', "$file") or die "Cant' create the file $file\n" ;
     print CSV "ID\tMASS_SUBMIT\tHMDB_ID\tCPD_FORMULA\tCPD_MW\tDELTA\n" ;
     	
