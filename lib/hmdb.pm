@@ -98,7 +98,7 @@ sub extract_sub_mz_lists {
 
 =head2 METHOD prepare_multi_masses_query
 
-	## Description : permet de generer une liste de masses au format d'interrogation de hmdb
+	## Description : Generate the adapted format of the mz list for HMDB
 	## Input : $masses
 	## Output : $hmdb_masses
 	## Usage : my ( $hmdb_masses ) = prepare_multi_masses_query( $masses ) ;
@@ -177,7 +177,7 @@ sub get_matches_from_hmdb {
 
 =head2 METHOD get_matches_from_hmdb_ua
 
-	## Description : permet de requeter via un user agent sur hmdb avec une masse, un delta de masse sur la banque de metabolites hmdb
+	## Description : HMDB querying via an user agent with parameters : mz, delta and molecular species (neutral, pos, neg)
 	## Input : $mass, $delta, $mode
 	## Output : $results
 	## Usage : my ( $results ) = get_matches_from_hmdb( $mass, $delta, $mode ) ;
@@ -215,8 +215,6 @@ sub get_matches_from_hmdb_ua {
 }
 ## END of SUB
 
-
-
 =head2 METHOD parse_hmdb_csv_results
 
 	## Description : parse the csv results and get data
@@ -237,7 +235,7 @@ sub parse_hmdb_csv_results {
     my %result_by_entry = () ;
     my %features = () ;
     
-    print Dumper $csv ;
+#    print Dumper $csv ;
     
     foreach my $line (@{$csv}) {
     	
@@ -275,7 +273,7 @@ sub parse_hmdb_csv_results {
 
 =head2 METHOD parse_hmdb_page_results
 
-	## Description : permet de parser le contenu des resultats hmdb
+	## Description : [DEPRECATED] old HMDB html page parser
 	## Input : $page
 	## Output : $results
 	## Usage : my ( $results ) = parse_hmdb_page_result( $pages ) ;
@@ -354,7 +352,7 @@ sub parse_hmdb_page_results {
 
 =head2 METHOD set_html_tbody_object
 
-	## Description : initializes and build the tbody object (perl array) need to html template
+	## Description : initializes and build the tbody object (perl array) needed to html template
 	## Input : $nb_pages, $nb_items_per_page
 	## Output : $tbody_object
 	## Usage : my ( $tbody_object ) = set_html_tbody_object($nb_pages, $nb_items_per_page) ;
@@ -382,7 +380,7 @@ sub set_html_tbody_object {
 
 =head2 METHOD add_mz_to_tbody_object
 
-	## Description : initializes and build the mz object (perl array) need to html template
+	## Description : initializes and build the mz object (perl array) needed to html template
 	## Input : $tbody_object, $nb_items_per_page, $mz_list
 	## Output : $tbody_object
 	## Usage : my ( $tbody_object ) = add_mz_to_tbody_object( $tbody_object, $nb_items_per_page, $mz_list ) ;
@@ -436,7 +434,7 @@ sub add_mz_to_tbody_object {
 
 =head2 METHOD add_entries_to_tbody_object
 
-	## Description : initializes and build the mz object (perl array) need to html template
+	## Description : initializes and build the entries object (perl array) needed to html template
 	## Input : $tbody_object, $nb_items_per_page, $mz_list, $entries
 	## Output : $tbody_object
 	## Usage : my ( $tbody_object ) = add_entries_to_tbody_object( $tbody_object, $nb_items_per_page, $mz_list, $entries ) ;
@@ -755,7 +753,7 @@ sub write_csv_skel {
 
 =head2 METHOD write_csv_one_mass
 
-	## Description : permet de print un fichier cvs
+	## Description : print a cvs file
 	## Input : $masses, $ids, $results, $file
 	## Output : N/A
 	## Usage : write_csv_one_mass( $ids, $results, $file ) ;
@@ -836,7 +834,7 @@ You can find documentation for this module with the perldoc command.
 
 =over 4
 
-=item :ALL is prepare_multi_masses_query
+=item :ALL is ...
 
 =back
 
@@ -855,5 +853,7 @@ version 1 : 06 / 06 / 2013
 version 2 : 27 / 01 / 2014
 
 version 3 : 19 / 11 / 2014
+
+version 4 : 28 / 01 / 2016
 
 =cut
