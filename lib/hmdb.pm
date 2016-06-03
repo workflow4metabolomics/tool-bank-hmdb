@@ -223,6 +223,7 @@ sub get_matches_from_hmdb_ua {
 
 	my $ua = new LWP::UserAgent;
 	$ua->agent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36");
+	$ua->timeout(500);
 	 
 	my $req = HTTP::Request->new(
 	    POST => 'http://specdb.wishartlab.com/ms/search.csv');
