@@ -33,6 +33,7 @@
           <when value="yes">
             <param name="nbHeader" label="Number of header lines " type="integer" value="1" min="1" size="10" help="number of lines not containing masses"/>
           </when>
+          <when value="no"/>
         </conditional>
 	    <param name="colfactor" label="Column of masses " type="data_column" data_ref="masses" accept_default="true" />
       </when>

@@ -100,7 +100,7 @@ else {
 	warn "[warning] Input data are missing : none mass or file of masses\n" ;
 	&help ;
 }
-
+#print Dumper $masses ;
 ## ---------------- launch queries -------------------- :
 
 if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) and ( $molecular_species ne '' ) ) {
