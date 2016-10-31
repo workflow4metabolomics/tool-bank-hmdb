@@ -60,28 +60,28 @@
   	<test>
   		<!--test 01 no result - fake-mzrt-input-with-id -->
   		<param name="choice" value="YES"/>
-  		<param name="masses" value="input_test01_fake-mzrt-input-with-id.tsv"/>
+  		<param name="masses" value="input_test01_fake-mzrt-input-with-id.tabular"/>
   		<param name="header_choice" value="yes"/>
   		<param name="nblineheader" value="1"/>
   		<param name="colfactor" value="2"/>
   		<param name="delta" value="0.001"/>
   		<param name="mode" value="neutral"/>
-  		<output name="variableMetadata" file="out_test01.tsv"/>
-  		<output name="HmdbResView" file="out_test01.html"/>
-  		<output name="HmdbResXls" file="out_test01.csv"/>
+  		<output name="variableMetadata" file="out_test01.tabular"/>
+  		<output name="HmdbOutWeb" file="out_test01.html"/>
+  		<output name="HmdbOutXlsx" file="out_test01.xlsx"/>
   	</test>
   	<test>
   		<!--test 02 : some results - with-mzrt-input-with-id file-->
   		<param name="choice" value="YES"/>
-  		<param name="masses" value="input_test02_mzrt-input-with-id.tsv"/>
+  		<param name="masses" value="input_test02_mzrt-input-with-id.tabular"/>
   		<param name="header_choice" value="yes"/>
   		<param name="nblineheader" value="1"/>
   		<param name="colfactor" value="2"/>
   		<param name="delta" value="0.001"/>
   		<param name="mode" value="positive"/>
-  		<output name="variableMetadata" file="out_test02.tsv"/>
-  		<output name="HmdbResView" file="out_test02.html"/>
-  		<output name="HmdbResXls" file="out_test02.csv"/>
+  		<output name="variableMetadata" file="out_test02.tabular"/>
+  		<output name="HmdbOutWeb" file="out_test02.html"/>
+  		<output name="HmdbOutXlsx" file="out_test02.xlsx"/>
   	</test>
   	<test>
   		<!--test 03 : some results - with-mz list in manual mass mode-->
@@ -89,9 +89,9 @@
   		<param name="mass" value="175.01 238.19 420.16 780.32 956.25 1100.45"/>
   		<param name="delta" value="0.05"/>
   		<param name="mode" value="positive"/>
-  		<output name="variableMetadata" file="out_test03.tsv"/>
-  		<output name="HmdbResView" file="out_test03.html"/>
-  		<output name="HmdbResXls" file="out_test03.csv"/>
+  		<output name="variableMetadata" file="out_test03.tabular"/>
+  		<output name="HmdbOutWeb" file="out_test03.html"/>
+  		<output name="HmdbOutXlsx" file="out_test03.xlsx"/>
   	</test>
   </tests>
 
