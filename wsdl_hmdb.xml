@@ -4,7 +4,7 @@
   </description>
   
   <requirements>
-      <requirement type="package" version="0.413">perl-list-moreutils</requirement>
+      <requirement type="package" version="1.19">perl-soap-lite</requirement>
       <requirement type="package" version="6.15">perl-lwp-simple</requirement>
 	  <requirement type="package" version="6.15">perl-libwww-perl</requirement>
       <requirement type="package" version="2.95">perl-html-template</requirement>
