@@ -1,9 +1,25 @@
-<tool id="wsdl_hmdb" name="HMDB MS search" version="2016-01-28">
+<tool id="wsdl_hmdb" name="HMDB MS search" version="2016-11-28">
   <description>
         search by masses on HMDB online bank
   </description>
-  <command interpreter="perl"><![CDATA[
-        wsdl_hmdb.pl
+  
+  <requirements>
+      <requirement type="package" version="0.413">perl-list-moreutils</requirement>
+      <requirement type="package" version="6.15">perl-lwp-simple</requirement>
+	  <requirement type="package" version="6.15">perl-libwww-perl</requirement>
+      <requirement type="package" version="2.95">perl-html-template</requirement>
+      <requirement type="package" version="1.71">perl-uri</requirement>
+      <requirement type="package" version="1.33">perl-text-csv</requirement>
+      
+  </requirements>
+  
+  <stdio>
+      <exit_code range="1" level="fatal" />
+  </stdio>
+  
+  
+  <command><![CDATA[
+        perl $__tool_directory__/
         #if str($input_type.choice) == "YES":
             -masses "${input_type.masses}"
             -header_choice "${input_type.header.header_choice}"

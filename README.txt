@@ -16,7 +16,7 @@ use FindBin ;
 use Encode;
 
 # libs CPAN PERL : 
-$ perl -e 'use Text::CSV' 	- KO
+$ perl -e 'use Text::CSV' 	- OK
 use LWP::Simple;		- OK
 use LWP::UserAgent;		- OK
 use URI::URL;			- OK
