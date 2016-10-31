@@ -1,5 +1,5 @@
 ## ****** HMDB environnemnt : ****** ##
-# version January 2016 M Landi / F Giacomoni - INRA - METABOHUB - workflow4metabolomics.org core team
+# version Nov 2016 M Landi / F Giacomoni - INRA - METABOHUB - workflow4metabolomics.org core team
 
 ## --- PERL compilator / libraries : --- ##
 $ perl -v
@@ -16,17 +16,15 @@ use FindBin ;
 use Encode;
 
 # libs CPAN PERL : 
-$ perl -e 'use Text::CSV'
-$ perl -e 'use LWP::Simple'
-$ perl -e 'use URI::URL'
-$ perl -e 'use SOAP::Lite'
-$ perl -e 'use HTML::Template'
+$ perl -e 'use Text::CSV' 	- KO
+use LWP::Simple;		- OK
+use LWP::UserAgent;		- OK
+use URI::URL;			- OK
+use SOAP::Lite;			- OK
+use HTML::Template ;		- OK
+
 $ sudo perl -MCPAN -e shell
 cpan> install Text::CSV
-cpan> install LWP::Simple
-cpan> install URI::URL
-cpan> install SOAP::Lite
-cpan>  install HTML::Template
 
 # libs pfem PERL : this lib were included in lib dir.
 use conf::conf  qw( :ALL ) ;
