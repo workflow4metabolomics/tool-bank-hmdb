@@ -236,5 +236,9 @@ And their "W4M courses 2015":
  | Annotation Banks - Annotation  
 	
 
-	</help>
+	]]></help>
+	<citations>
+   		<citation type="doi">10.1093/nar/gks1065</citation>
+   		<citation type="doi">10.1093/bioinformatics/btu813</citation>
+	</citations>
 </tool>
