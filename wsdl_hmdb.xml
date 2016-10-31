@@ -2,7 +2,7 @@
   <description>
         search by masses on HMDB online bank
   </description>
-  <command interpreter="perl">
+  <command interpreter="perl"><![CDATA[
         wsdl_hmdb.pl
         #if str($input_type.choice) == "YES":
             -masses "${input_type.masses}"
@@ -15,8 +15,8 @@
             -mass "${input_type.mass}"
         #end if
         -delta "$delta" -mode "$mode"
-        -output "$variableMetadata" -view "$HmdbResView" -outputxls "$HmdbResXls"
-  </command>
+        -output_tabular "$variableMetadata" -output_html "$HmdbOutWeb" -output_xls "$HmdbOutXlsx"
+  ]]></command>
   <inputs>
     <conditional name="input_type">
       <param name="choice" type="select" label="Would you use a file " help="if 'NO' is selected then one or more mass(es) must be entered manually">
@@ -51,9 +51,9 @@
   </inputs>
   
   <outputs>
-    <data name="variableMetadata" format="tabular" label="${tool.name}_TSV"/>
-    <data name="HmdbResView" format="html" label="${tool.name}_VIEW"/>
-    <data name="HmdbResXls" label="${tool.name}_XLS" format="tabular" />
+    <data name="variableMetadata" format="tabular" label="${image.name[:-6]}.HMDB.tabular"/>
+    <data name="HmdbOutWeb" format="html" label="${image.name[:-6]}.HMDB_WEB.html"/>
+    <data name="HmdbOutXlsx" label="${image.name[:-6]}.HMDB.xlsx" format="tabular" />
   </outputs>
   
   <tests>
@@ -95,7 +95,7 @@
   	</test>
   </tests>
 
-  <help>
+  <help><![CDATA[
 
 .. class:: infomark
 
@@ -208,11 +208,11 @@ Output files
 ------------
 
 Two types of files
-	| wsdl_hmdb_VIEW.HTML : for viewing result via HTML.
+	| HMDB_WEB.HTML: for viewing result via HTML.
 	| 
-	| wsdl_hmdb_TSV.tabular : for linking with others modules.
+	| HMDB_TABULAR.tabular: for linking with others modules.
 	| 
-	| an excel-like output will be available. 
+	| HMDB_XLSX.xlsx: an excel-like output permitting manual annotation cleaning. 
 	| 
 	
 ---------------------------------------------------

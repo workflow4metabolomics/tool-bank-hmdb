@@ -42,9 +42,9 @@ my ( $delta, $molecular_species, $out_tab, $out_html, $out_xls ) = ( undef, unde
 				"colfactor:i"		=> \$col_mass,			## Column id for retrieve formula list in tabular file
 				"delta:f"			=> \$delta,
 				"mode:s"			=> \$molecular_species,	## Molecular species (positive/negative/neutral) 
-				"output|o:s"		=> \$out_tab,			## option : path to the ouput (tabular : input+results )
-				"view|v:s"			=> \$out_html,			## option : path to the results view (output2)
-				"outputxls:s"		=> \$out_xls,			## option : path to the xls-like format output
+				"output_tabular:s"	=> \$out_tab,			## option : path to the ouput (tabular : input+results )
+				"output_html|v:s"	=> \$out_html,			## option : path to the results view (output2)
+				"output_xlsx:s"		=> \$out_xls,			## option : path to the xls-like format output
             ) ;
 
 #=============================================================================
