@@ -914,7 +914,7 @@ sub set_hmdb_matrix_object_with_ids {
 		    	## METLIN data display model
 		   		## entry1= ENTRY_DELTA::ENTRY_ENTRY_NAME::ENTRY_CPD_MZ::ENTRY_FORMULA::ENTRY_ADDUCT::ENTRY_ENTRY_ID | entry2=VAR1::VAR2::VAR3::VAR4|...
 		   		my $entry = $hmdb_delta.'::['."$hmdb_name".']::'.$hmdb_cpd_mz.'::'.$hmdb_formula.'::['.$hmdb_adduct.']::'.$hmdb_id ;
-		    	
+		   		
 		   		# manage final pipe
 		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $entry.' | ' ; }
 		   		else { 						   			$cluster_col .= $entry ; 	}
@@ -987,8 +987,8 @@ sub write_csv_skel {
 	## Retrieve Values
     my $self = shift ;
     my ( $csv_file, $rows ) = @_ ;
-    
-    my $ocsv = lib::csv::new() ;
+
+    my $ocsv = lib::csv::new( {is_binary => 1 , quote_binary => 0, quote_char => undef }) ;
 	my $csv = $ocsv->get_csv_object("\t") ;
 	$ocsv->write_csv_from_arrays($csv, $$csv_file, $rows) ;
     
@@ -1060,7 +1060,7 @@ sub write_csv_one_mass {
 	    			
 	    			## print adduct
 	    			if ( $entry->{ENTRY_ADDUCT} ) { print CSV "[$entry->{ENTRY_ADDUCT}]\t" ; }
-	    			else { 							print CSV "N/A\t" ; }
+	    			else { 							 print CSV "N/A\t" ; }
 	    			
 	    			## print adduct mz
 	    			if ( $entry->{ENTRY_ADDUCT_MZ} ) { print CSV "$entry->{ENTRY_ADDUCT_MZ}\t" ; }
