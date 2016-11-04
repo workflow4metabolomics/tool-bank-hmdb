@@ -122,7 +122,7 @@
 
 .. class:: infomark
 
-**Please cite** If you use this tool, please cite 
+**Please cite** If you use this tool, please add the following reference
   | `Wishart DS, Jewison T, Guo AC, Wilson M, Knox C, et al., HMDB 3.0—The Human Metabolome Database in 2013. Nucleic Acids Res. 2013. &lt;http://www.ncbi.nlm.nih.gov/pubmed/23161693&gt;`_
 
 
@@ -242,7 +242,7 @@ Working example
 
 .. class:: warningmark
 
-Refer to the corresponding `"W4M HowTo" &lt;http://workflow4metabolomics.org/howto&gt;`_ page:
+Refer to the corresponding W4M HowTo section: http://workflow4metabolomics.org/howto
  | Format Data For Postprocessing
  | Perform LCMS Annotations
 
@@ -254,8 +254,4 @@ And their "W4M courses 2015":
 	
 
 	]]></help>
-	<citations>
-   		<citation type="doi">10.1093/nar/gks1065</citation>
-   		<citation type="doi">10.1093/bioinformatics/btu813</citation>
-	</citations>
 </tool>
