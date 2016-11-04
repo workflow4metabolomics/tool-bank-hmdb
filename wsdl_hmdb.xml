@@ -10,6 +10,7 @@
       <requirement type="package" version="2.95">perl-html-template</requirement>
       <requirement type="package" version="1.71">perl-uri</requirement>
       <requirement type="package" version="1.33">perl-text-csv</requirement>
+      <requirement type="package" version="3.49">perl-xml-twig</requirement>
       
   </requirements>
   
