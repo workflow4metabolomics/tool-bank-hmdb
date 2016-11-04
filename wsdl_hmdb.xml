@@ -20,7 +20,7 @@
   
   
   <command><![CDATA[
-        perl $__tool_directory__/
+        perl $__tool_directory__/wsdl_hmdb.pl
         #if str($input_type.choice) == "YES":
             -masses "${input_type.masses}"
             -header_choice "${input_type.header.header_choice}"
@@ -70,12 +70,24 @@
   </inputs>
   
   <outputs>
-    <data name="variableMetadata" format="tabular" label="${input_type.masses.name[:-6]}.HMDB.tabular"/>
-    <data name="HmdbOutWeb" format="html" label="${input_type.masses.name[:-6]}.HMDB_WEB.html"/>
-    <data name="HmdbOutXlsx" label="${input_type.masses.name[:-6]}.HMDB.xlsx" format="tabular" />
-    <data name="variableMetadata2" format="tabular" label="HMDB.tabular"/>
-    <data name="HmdbOutWeb2" format="html" label="HMDB_WEB.html"/>
-    <data name="HmdbOutXlsx2" label="HMDB.xlsx" format="tabular" />
+    <data name="variableMetadata" format="tabular" label="${input_type.masses.name[:-6]}.HMDB.tabular">
+    	<filter>input_type['choice'] == "YES"</filter>
+   	</data>
+    <data name="HmdbOutWeb" format="html" label="${input_type.masses.name[:-6]}.HMDB_WEB.html">
+    	<filter>input_type['choice'] == "YES"</filter>
+   	</data>
+    <data name="HmdbOutXlsx" label="${input_type.masses.name[:-6]}.HMDB.xlsx" format="tabular">
+    	<filter>input_type['choice'] == "YES"</filter>
+   	</data>
+    <data name="variableMetadata2" format="tabular" label="HMDB.tabular">
+    	<filter>input_type['choice'] == "NO"</filter>
+   	</data>
+    <data name="HmdbOutWeb2" format="html" label="HMDB_WEB.html">
+    	<filter>input_type['choice'] == "NO"</filter>
+   	</data>
+    <data name="HmdbOutXlsx2" label="HMDB.xlsx" format="tabular">
+    	<filter>input_type['choice'] == "NO"</filter>
+   	</data>
   </outputs>
   
   <tests>
