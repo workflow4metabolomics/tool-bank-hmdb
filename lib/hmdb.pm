@@ -381,6 +381,36 @@ sub parse_hmdb_page_results {
 }
 ## END of SUB
 
+
+=head2 METHOD get_unik_ids_from_results
+
+	## Description : get all unik ids from the hmdb result object
+	## Input : $results
+	## Output : $ids
+	## Usage : my ( $ids ) = get_unik_ids_from_results ( $results ) ;
+	
+=cut
+## START of SUB
+sub get_unik_ids_from_results {
+    ## Retrieve Values
+    my $self = shift ;
+    my ( $results ) = @_;
+    my ( %ids ) = ( () ) ;
+    
+    foreach my $result (@{$results}) {
+    	
+    	foreach my $entries (@{$result}) {
+    		
+    		if ( ($entries->{'ENTRY_ENTRY_ID'}) and ($entries->{'ENTRY_ENTRY_ID'} ne '' ) ) {
+    			$ids{$entries->{'ENTRY_ENTRY_ID'}} = 1 ;
+    		}
+    	}
+    }
+    
+    return (\%ids) ;
+}
+### END of SUB
+
 =head2 METHOD set_html_tbody_object
 
 	## Description : initializes and build the tbody object (perl array) needed to html template
