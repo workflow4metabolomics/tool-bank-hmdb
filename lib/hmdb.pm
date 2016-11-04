@@ -720,7 +720,7 @@ sub add_entries_to_tbody_object {
     		if ($check_noentry == 0 ) {
     			my %entry = (
 		    			ENTRY_COLOR => $tbody_object->[$index_page]{MASSES}[$index_mz]{MZ_COLOR},
-		   				ENTRY_ENTRY_ID => 'No_result_found_on_HMDB',
+		   				ENTRY_ENTRY_ID => 'NONE',
 		   				ENTRY_ENTRY_ID2 => '',
 						ENTRY_FORMULA => 'n/a',
 						ENTRY_CPD_MZ => 'n/a',
@@ -840,7 +840,7 @@ sub set_lm_matrix_object {
 	    	$check_rebond = 0 ; ## reinit double control
 	    	$index_entries++ ;
 	    } ## end foreach
-	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on_HMDB' ; }
+	    if ( !defined $cluster_col ) { $cluster_col = 'NONE' ; }
     	push (@clusters, $cluster_col) ;
     	push (@hmdb_matrix, \@clusters) ;
     	$index_mz++ ;
@@ -906,7 +906,7 @@ sub set_hmdb_matrix_object_with_ids {
 	    	$check_rebond = 0 ; ## reinit double control
 	    	$index_entries++ ;
 	    } ## end foreach
-	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on_HMDB' ; }
+	    if ( !defined $cluster_col ) { $cluster_col = 'NONE' ; }
     	push (@clusters, $cluster_col) ;
     	push (@hmdb_matrix, \@clusters) ;
     	$index_mz++ ;
@@ -1037,7 +1037,7 @@ sub write_csv_one_mass {
 		    	$check_rebond = 0 ; ## reinit double control
     		} ## end foreach
     		if ($check_noentry == 0 ) {
-    			print CSV "$id\t$mass\t".'No_result_found_on_HMDB'."\tn/a\tn/a\t0\n" ;
+    			print CSV "$id\t$mass\t".'NONE'."\tn/a\tn/a\t0\n" ;
     		}
     	}
     	$i++ ;
