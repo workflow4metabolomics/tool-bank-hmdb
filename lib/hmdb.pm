@@ -411,6 +411,111 @@ sub get_unik_ids_from_results {
 }
 ### END of SUB
 
+
+
+=head2 METHOD get_hmdb_metabocard_from_id
+
+	## Description : get a metabocard (xml format from an ID on HMDB)
+	## Input : $ids
+	## Output : $metabocard_features
+	## Usage : my ( $metabocard_features ) = get_hmdb_metabocard_from_id ( $ids ) ;
+	
+=cut
+## START of SUB
+sub get_hmdb_metabocard_from_id {
+    ## Retrieve Values
+    my $self = shift ;
+    my ( $ids, $hmdb_url ) = @_;
+    my ( %metabocard_features ) = ( () ) ;
+    my $query = undef ;
+    
+    ## structure %metabocard_features
+    # metabolite_id = (
+    #	'metabolite_name' => '__name__',
+    #	'metabolite_inchi' => '__inchi__',
+    #	'metabolite_logp' => '__logp-ALOGPS__',
+    #
+    # )
+    
+    
+    if( (defined $ids) and  ($ids > 0 ) ) {
+    	
+    	foreach my $id (keys %{$ids}) {
+			
+#			print "\n============== > $id **********************\n " ;
+			my $twig = undef ;
+			
+			if (defined $hmdb_url) {
+				$query = $hmdb_url.$id.'.xml' ;
+				
+				## test the header if exists
+				my $response = head($query) ;
+				
+				if (!defined $response) {
+					$metabocard_features{$id}{'metabolite_name'} = undef ;
+					$metabocard_features{$id}{'metabolite_inchi'} = undef ;
+					$metabocard_features{$id}{'metabolite_logp'} = undef ;
+					## Need to be improve to manage http 404 or other response diff than 200
+				}
+				elsif ($response->is_success) {
+					
+					$twig = XML::Twig->nparse_ppe(
+					
+						twig_handlers => { 
+							# metabolite name
+							'metabolite/name' => sub { $metabocard_features{$id}{'metabolite_name'} = $_ -> text_only ; } ,
+							# metabolite inchi
+							'metabolite/inchi' => sub { $metabocard_features{$id}{'metabolite_inchi'} = $_ -> text_only ; } ,
+							## metabolite logP
+							'metabolite/predicted_properties/property' => sub {
+								
+								my ($kind, $source, $value ) = ( undef, undef, undef ) ;
+								
+								if (defined $_->children ) {
+    								foreach my $field ($_->children) {
+    									if ( $field->name eq 'kind') 		{ $kind = $field->text ; }
+    									elsif ( $field->name eq 'source') 	{ $source = $field->text ; }
+    									elsif ( $field->name eq 'value') 	{ $value = $field->text ; }
+    									
+    									if (defined $source ) {
+    										if ( ( $kind eq 'logp' ) and ( $source eq 'ALOGPS' ) ) {
+												$metabocard_features{$id}{'metabolite_logp'} = $value ;
+											}
+											($kind, $source, $value ) = ( undef, undef, undef ) ;
+    									}
+    								}
+								}
+							}
+						}, 
+						pretty_print => 'indented', 
+						error_context => 1, $query
+					);
+						
+#				    $twig->print;
+					$twig->purge ;
+				    
+				    if (!$@) {
+				    	
+				    }
+				    else {
+				    	warn $@ ;
+				    }
+				}
+			}
+			else {
+				warn "The hmdb metabocard url is not defined\n" ;
+				last;
+			}
+    	}
+    }
+    else {
+    	warn "The HMDB ids list from HMDB is empty - No metabocard found\n" ;
+    }
+    
+#    print Dumper %metabocard_features ;
+    return (\%metabocard_features) ;
+}
+### END of SUB
 =head2 METHOD set_html_tbody_object
 
 	## Description : initializes and build the tbody object (perl array) needed to html template
