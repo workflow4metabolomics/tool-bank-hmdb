@@ -702,6 +702,7 @@ sub add_entries_to_tbody_object {
     				
     				my %entry = (
 		    			ENTRY_COLOR => $tbody_object->[$index_page]{MASSES}[$index_mz]{MZ_COLOR},
+		    			ENTRY_ENTRY_NAME => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_NAME}, 	
 		   				ENTRY_ENTRY_ID => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_ID},
 		   				ENTRY_ENTRY_ID2 => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_ID},
 						ENTRY_FORMULA => $entries->[$index_mz_continous][$index_entry]{ENTRY_FORMULA},
@@ -709,7 +710,9 @@ sub add_entries_to_tbody_object {
 						ENTRY_ADDUCT => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT},
 						ENTRY_ADDUCT_TYPE => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT_TYPE},
 						ENTRY_ADDUCT_MZ => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT_MZ},
-						ENTRY_DELTA => $entries->[$index_mz_continous][$index_entry]{ENTRY_DELTA},   			
+						ENTRY_DELTA => $entries->[$index_mz_continous][$index_entry]{ENTRY_DELTA},
+						ENTRY_ENTRY_INCHI => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_INCHI}, 		
+						ENTRY_ENTRY_LOGP => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_LOGP},	
 		    		) ;
 		    		
 	    			push ( @{ $tbody_object->[$index_page]{MASSES}[$index_mz]{ENTRIES} }, \%entry) ;
@@ -720,6 +723,7 @@ sub add_entries_to_tbody_object {
     		if ($check_noentry == 0 ) {
     			my %entry = (
 		    			ENTRY_COLOR => $tbody_object->[$index_page]{MASSES}[$index_mz]{MZ_COLOR},
+		    			ENTRY_ENTRY_NAME  => 'UNKNOWN',
 		   				ENTRY_ENTRY_ID => 'NONE',
 		   				ENTRY_ENTRY_ID2 => '',
 						ENTRY_FORMULA => 'n/a',
@@ -727,7 +731,9 @@ sub add_entries_to_tbody_object {
 						ENTRY_ADDUCT => 'n/a',
 						ENTRY_ADDUCT_TYPE => 'n/a',
 						ENTRY_ADDUCT_MZ => 'n/a',
-						ENTRY_DELTA => 0,   			
+						ENTRY_DELTA => 0,
+						ENTRY_ENTRY_INCHI => 'n/a',
+						ENTRY_ENTRY_LOGP => 'n/a',
 		    		) ;
 		    		push ( @{ $tbody_object->[$index_page]{MASSES}[$index_mz]{ENTRIES} }, \%entry) ;
     		}
