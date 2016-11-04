@@ -873,6 +873,9 @@ sub set_hmdb_matrix_object_with_ids {
     
     if ( defined $header ) {
     	my @headers = () ;
+    	
+    	## redefined the header hmdb(delta::name::mz::formula::adduct::id)
+    	$header = 'hmdb(delta::name::mz::formula::adduct::id)' ;
     	push @headers, $header ;
     	push @hmdb_matrix, \@headers ;
     }
@@ -900,13 +903,21 @@ sub set_hmdb_matrix_object_with_ids {
 	    	if ( $check_rebond == 0 ) {
     				
 	    		push ( @anti_redondant, $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID} ) ;
+	    		##
+	    		my $hmdb_name = $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_NAME}  ;
 	    		my $hmdb_id = $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID}  ;
+	    		my $hmdb_formula = $entries->[$index_mz][$index_entries]{ENTRY_FORMULA}  ;
+	    		my $hmdb_cpd_mz = $entries->[$index_mz][$index_entries]{ENTRY_CPD_MZ}  ;
+	    		my $hmdb_adduct = $entries->[$index_mz][$index_entries]{ENTRY_ADDUCT}  ;
+	    		my $hmdb_delta = $entries->[$index_mz][$index_entries]{ENTRY_DELTA}  ;
 		    	
-		    	## METLIN data display model -- IDs ONLY !!
-		   		## entry1=VAR1::VAR2::VAR3::VAR4|entry2=VAR1::VAR2::VAR3::VAR4|...
+		    	## METLIN data display model
+		   		## entry1= ENTRY_DELTA::ENTRY_ENTRY_NAME::ENTRY_CPD_MZ::ENTRY_FORMULA::ENTRY_ADDUCT::ENTRY_ENTRY_ID | entry2=VAR1::VAR2::VAR3::VAR4|...
+		   		my $entry = $hmdb_delta.'::['."$hmdb_name".']::'.$hmdb_cpd_mz.'::'.$hmdb_formula.'::['.$hmdb_adduct.']::'.$hmdb_id ;
+		    	
 		   		# manage final pipe
-		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $hmdb_id.'|' ; }
-		   		else { 						   			$cluster_col .= $hmdb_id ; 	}
+		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $entry.' | ' ; }
+		   		else { 						   			$cluster_col .= $entry ; 	}
 	    		
 	    	}
 	    	$check_rebond = 0 ; ## reinit double control
