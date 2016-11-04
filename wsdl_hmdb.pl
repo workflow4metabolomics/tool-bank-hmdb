@@ -134,16 +134,14 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 	
 	## Map metabocards with results (add supplementary data)
 	
-	print Dumper $results ;
+#	print Dumper $results ;
 #	print Dumper $hmdb_ids ;
-	print Dumper $metabocard_features ;
+#	print Dumper $metabocard_features ;
 
 	if ( ( defined $results ) and ( defined $metabocard_features ) ) {
 		$results = $oHmdb->map_suppl_data_on_hmdb_results($results, $metabocard_features) ;
 	}
-	print Dumper $results ;
-	
-	
+
 	## Uses N mz and theirs entries per page (see config file).
 	# how many pages you need with your input mz list?
 	$nb_pages_for_html_out = ceil( scalar(@{$masses} ) / $CONF->{HTML_ENTRIES_PER_PAGE} )  ;
