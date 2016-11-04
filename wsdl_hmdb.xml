@@ -68,9 +68,9 @@
   </inputs>
   
   <outputs>
-    <data name="variableMetadata" format="tabular" label="${image.name[:-6]}.HMDB.tabular"/>
-    <data name="HmdbOutWeb" format="html" label="${image.name[:-6]}.HMDB_WEB.html"/>
-    <data name="HmdbOutXlsx" label="${image.name[:-6]}.HMDB.xlsx" format="tabular" />
+    <data name="variableMetadata" format="tabular" label="${masses.name[:-6]}.HMDB.tabular"/>
+    <data name="HmdbOutWeb" format="html" label="${masses.name[:-6]}.HMDB_WEB.html"/>
+    <data name="HmdbOutXlsx" label="${masses.name[:-6]}.HMDB.xlsx" format="tabular" />
   </outputs>
   
   <tests>
@@ -144,6 +144,9 @@ Description
 Workflow position
 -----------------
 
+
+.. image:: ./static/images/metabolomics/hmdb.png
+        :width: 800
 
 
 -----------
