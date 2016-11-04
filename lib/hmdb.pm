@@ -11,6 +11,7 @@ use URI::URL;
 use SOAP::Lite;
 use Encode;
 use HTML::Template ;
+use XML::Twig ;
 
 use Data::Dumper ;
 
@@ -18,8 +19,8 @@ use vars qw($VERSION @ISA @EXPORT %EXPORT_TAGS);
 
 our $VERSION = "1.0";
 our @ISA = qw(Exporter);
-our @EXPORT = qw( extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass );
-our %EXPORT_TAGS = ( ALL => [qw( extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass )] );
+our @EXPORT = qw( map_suppl_data_on_hmdb_results get_unik_ids_from_results get_hmdb_metabocard_from_id extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass );
+our %EXPORT_TAGS = ( ALL => [qw( map_suppl_data_on_hmdb_results get_unik_ids_from_results get_hmdb_metabocard_from_id extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass )] );
 
 =head1 NAME
 
@@ -575,6 +576,8 @@ sub map_suppl_data_on_hmdb_results {
     return (\@more_results) ;
 }
 ### END of SUB
+
+
 =head2 METHOD set_html_tbody_object
 
 	## Description : initializes and build the tbody object (perl array) needed to html template
@@ -1080,5 +1083,7 @@ version 2 : 27 / 01 / 2014
 version 3 : 19 / 11 / 2014
 
 version 4 : 28 / 01 / 2016
+
+version 5 : 02 / 11 /2016
 
 =cut
