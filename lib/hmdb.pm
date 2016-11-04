@@ -1011,7 +1011,7 @@ sub write_csv_one_mass {
     my ( $masses, $ids, $results, $file,  ) = @_ ;
 
     open(CSV, '>:utf8', "$file") or die "Cant' create the file $file\n" ;
-    print CSV "ID\tMASS_SUBMIT\tHMDB_ID\tCPD_FORMULA\tCPD_MW\tDELTA\n" ;
+    print CSV "ID\tQuery(Da)\tDelta\tMetabolite_Name\tCpd_MW(Da)\tFormula\tAdduct\tAdduct_MW(Da)\tHMDB_ID\n" ;
     	
     my $i = 0 ;
     	
@@ -1040,21 +1040,40 @@ sub write_csv_one_mass {
 	    			
 		    		push ( @anti_redondant, $entry->{ENTRY_ENTRY_ID} ) ;
 
-	    			print CSV "$id\t$mass\t$entry->{ENTRY_ENTRY_ID}\t" ;
+	    			print CSV "$id\t$mass\t" ;
+	    			
+	    			## print delta
+	    			if ( $entry->{ENTRY_DELTA} ) { print CSV "$entry->{ENTRY_DELTA}\t" ; }
+	    			else { 							 print CSV "0\t" ; }
+	    			
 	    			## print cpd name
+	    			if ( $entry->{ENTRY_ENTRY_NAME} ) { print CSV "[$entry->{ENTRY_ENTRY_NAME}]\t" ; }
+	    			else { 							 print CSV "UNKNOWN\t" ; }
+	    			
+	    			## print cpd mz
+	    			if ( $entry->{ENTRY_CPD_MZ} ) { print CSV "$entry->{ENTRY_CPD_MZ}\t" ; }
+	    			else { 							 print CSV "N/A\t" ; }
+	    			
+	    			## print cpd formula
 	    			if ( $entry->{ENTRY_FORMULA} ) { print CSV "$entry->{ENTRY_FORMULA}\t" ; }
 	    			else { 							 print CSV "N/A\t" ; }
-	    			## print cpd mw
-	    			if ( $entry->{ENTRY_CPD_MZ} ) { print CSV "$entry->{ENTRY_CPD_MZ}\t" ; }
+	    			
+	    			## print adduct
+	    			if ( $entry->{ENTRY_ADDUCT} ) { print CSV "[$entry->{ENTRY_ADDUCT}]\t" ; }
 	    			else { 							print CSV "N/A\t" ; }
-	    			## print delta
-	    			if ( $entry->{ENTRY_DELTA} ) {  print CSV "$entry->{ENTRY_DELTA}\n" ; }
+	    			
+	    			## print adduct mz
+	    			if ( $entry->{ENTRY_ADDUCT_MZ} ) { print CSV "$entry->{ENTRY_ADDUCT_MZ}\t" ; }
+	    			else { 							 print CSV "N/A\t" ; }
+	    			
+	    			## print cpd id
+	    			if ( $entry->{ENTRY_ENTRY_ID} ) { print CSV "$entry->{ENTRY_ENTRY_ID}\n" ; }
 	    			else { 							print CSV "N/A\n" ; }
 		    	}
 		    	$check_rebond = 0 ; ## reinit double control
     		} ## end foreach
     		if ($check_noentry == 0 ) {
-    			print CSV "$id\t$mass\t".'NONE'."\tn/a\tn/a\t0\n" ;
+    			print CSV "$id\t$mass\t0\tUNKNOWN\tN/A\tN/A\tN/A\tN/A\n" ;
     		}
     	}
     	$i++ ;
