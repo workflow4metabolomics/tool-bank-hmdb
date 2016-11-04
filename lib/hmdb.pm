@@ -516,6 +516,65 @@ sub get_hmdb_metabocard_from_id {
     return (\%metabocard_features) ;
 }
 ### END of SUB
+
+
+=head2 METHOD map_suppl_data_on_hmdb_results
+
+	## Description : map supplementary data with already collected results with hmdb search
+	## Input : $results, $features
+	## Output : $results
+	## Usage : my ( $results ) = map_suppl_data_on_hmdb_results ( $results, $features ) ;
+	
+=cut
+## START of SUB
+sub map_suppl_data_on_hmdb_results {
+    ## Retrieve Values
+    my $self = shift ;
+    my ( $results, $features ) = @_;
+    my ( @more_results ) = ( () ) ;
+    
+    @more_results = @{$results} ; ## Dump array ref to map
+    
+    foreach my $result (@more_results) {
+    	
+    	foreach my $entries (@{$result}) {
+    		
+    		if ( ($entries->{'ENTRY_ENTRY_ID'}) and ($entries->{'ENTRY_ENTRY_ID'} ne '' ) ) {
+    			## check that we have a ID for mapping
+    			my $current_id = $entries->{'ENTRY_ENTRY_ID'} ;
+    			if ($features->{"$current_id"}) {
+    				## Metabolite NAME
+    				if (defined $features->{"$current_id"}{'metabolite_name'} ) {
+    					$entries->{'ENTRY_ENTRY_NAME'} = $features->{"$current_id"}{'metabolite_name'}
+    				}
+    				else {
+    					$entries->{'ENTRY_ENTRY_NAME'} = 'UNKNOWN' ;
+    				}
+    				## Metabolite INCHI
+    				if (defined $features->{"$current_id"}{'metabolite_inchi'} ) {
+    					$entries->{'ENTRY_ENTRY_INCHI'} = $features->{"$current_id"}{'metabolite_inchi'}
+    				}
+    				else {
+    					$entries->{'ENTRY_ENTRY_INCHI'} = 'NA' ;
+    				}
+    				## Metabolite LOGP
+    				if (defined $features->{"$current_id"}{'metabolite_logp'} ) {
+    					$entries->{'ENTRY_ENTRY_LOGP'} = $features->{"$current_id"}{'metabolite_logp'}
+    				}
+    				else {
+    					$entries->{'ENTRY_ENTRY_LOGP'} = 'NA' ;
+    				}
+    			}
+    			else {
+    				warn "This HMDB id doesn't match any collected ids\n" ;
+    			}
+    		}
+    	}
+    }
+    
+    return (\@more_results) ;
+}
+### END of SUB
 =head2 METHOD set_html_tbody_object
 
 	## Description : initializes and build the tbody object (perl array) needed to html template
