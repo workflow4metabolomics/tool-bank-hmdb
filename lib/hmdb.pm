@@ -1073,7 +1073,7 @@ sub write_csv_one_mass {
 		    	$check_rebond = 0 ; ## reinit double control
     		} ## end foreach
     		if ($check_noentry == 0 ) {
-    			print CSV "$id\t$mass\t0\tUNKNOWN\tN/A\tN/A\tN/A\tN/A\n" ;
+    			print CSV "$id\t$mass\t0\tUNKNOWN\tN/A\tN/A\tN/A\tN/A\tN/A\n" ;
     		}
     	}
     	$i++ ;
