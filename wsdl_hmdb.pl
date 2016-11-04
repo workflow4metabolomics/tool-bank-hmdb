@@ -71,6 +71,7 @@ foreach my $html_template ( <$binPath/*.tmpl> ) { $CONF->{'HTML_TEMPLATE'} = $ht
 ## --------------- Global parameters ---------------- :
 my ( $ids, $masses, $results ) = ( undef, undef, undef ) ;
 my ( $complete_rows, $nb_pages_for_html_out ) = ( undef, 1 ) ;
+my $metabocard_features = undef ;
 my $search_condition = "Search params : Molecular specie = $molecular_species / delta (mass-to-charge ratio) = $delta" ;
 
 ## --------------- retrieve input data -------------- :
@@ -107,6 +108,7 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 	## prepare masses list and execute query
 	my $oHmdb = lib::hmdb::new() ;
 	my $hmdb_pages = undef ;
+	my $hmdb_ids = undef ;
 	
 	$results = [] ; # prepare arrays ref
 	my $submasses = $oHmdb->extract_sub_mz_lists($masses, $CONF->{HMDB_LIMITS} ) ;
@@ -120,10 +122,27 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 		my $result = undef ;
 		my ( $hmdb_masses, $nb_masses_to_submit ) = $oHmdb->prepare_multi_masses_query($mzs) ;
 		$hmdb_pages = $oHmdb->get_matches_from_hmdb_ua($hmdb_masses, $delta, $molecular_species) ;
-		$result = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $mzs) ; ## hash format result
+		($result) = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $mzs) ; ## hash format result
 		
 		$results = [ @$results, @$result ] ;
 	}
+	
+	## foreach metabolite get its own metabocard
+	$hmdb_ids = $oHmdb->get_unik_ids_from_results($results) ;
+#	$hmdb_ids->{'HMDB03125'} = 1 ,
+	$metabocard_features = $oHmdb->get_hmdb_metabocard_from_id($hmdb_ids, $CONF->{'HMDB_METABOCARD_URL'}) ; ## Try to multithread the querying
+	
+	## Map metabocards with results (add supplementary data)
+	
+	print Dumper $results ;
+#	print Dumper $hmdb_ids ;
+	print Dumper $metabocard_features ;
+
+	if ( ( defined $results ) and ( defined $metabocard_features ) ) {
+		$results = $oHmdb->map_suppl_data_on_hmdb_results($results, $metabocard_features) ;
+	}
+	print Dumper $results ;
+	
 	
 	## Uses N mz and theirs entries per page (see config file).
 	# how many pages you need with your input mz list?
