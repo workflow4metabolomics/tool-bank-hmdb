@@ -28,11 +28,13 @@
                 -nblineheader "${$input_type.header.nbHeader}"
             #end if
             -colfactor "${input_type.colfactor}"
+            -output_tabular "$variableMetadata" -output_html "$HmdbOutWeb" -output_xls "$HmdbOutXlsx"
         #else:
             -mass "${input_type.mass}"
+            -output_tabular "$variableMetadata2" -output_html "$HmdbOutWeb2" -output_xls "$HmdbOutXlsx2"
         #end if
         -delta "$delta" -mode "$mode"
-        -output_tabular "$variableMetadata" -output_html "$HmdbOutWeb" -output_xls "$HmdbOutXlsx"
+        
   ]]></command>
   <inputs>
     <conditional name="input_type">
@@ -68,9 +70,12 @@
   </inputs>
   
   <outputs>
-    <data name="variableMetadata" format="tabular" label="${masses.name[:-6]}.HMDB.tabular"/>
-    <data name="HmdbOutWeb" format="html" label="${masses.name[:-6]}.HMDB_WEB.html"/>
-    <data name="HmdbOutXlsx" label="${masses.name[:-6]}.HMDB.xlsx" format="tabular" />
+    <data name="variableMetadata" format="tabular" label="${input_type.masses.name[:-6]}.HMDB.tabular"/>
+    <data name="HmdbOutWeb" format="html" label="${input_type.masses.name[:-6]}.HMDB_WEB.html"/>
+    <data name="HmdbOutXlsx" label="${input_type.masses.name[:-6]}.HMDB.xlsx" format="tabular" />
+    <data name="variableMetadata2" format="tabular" label="HMDB.tabular"/>
+    <data name="HmdbOutWeb2" format="html" label="HMDB_WEB.html"/>
+    <data name="HmdbOutXlsx2" label="HMDB.xlsx" format="tabular" />
   </outputs>
   
   <tests>
