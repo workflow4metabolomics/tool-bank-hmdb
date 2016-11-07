@@ -123,9 +123,9 @@
   		<param name="mass" value="175.01 238.19 420.16 780.32 956.25 1100.45"/>
   		<param name="delta" value="0.05"/>
   		<param name="mode" value="positive"/>
-  		<output name="variableMetadata" file="out_test03.tabular"/>
-  		<output name="HmdbOutWeb" file="out_test03.html"/>
-  		<output name="HmdbOutXlsx" file="out_test03.xlsx"/>
+  		<output name="variableMetadata2" file="out_test03.tabular"/>
+  		<output name="HmdbOutWeb2" file="out_test03.html"/>
+  		<output name="HmdbOutXlsx2" file="out_test03.xlsx"/>
   	</test>
   </tests>
 
