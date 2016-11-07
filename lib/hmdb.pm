@@ -12,6 +12,7 @@ use SOAP::Lite;
 use Encode;
 use HTML::Template ;
 use XML::Twig ;
+use Text::CSV ;
 
 use Data::Dumper ;
 

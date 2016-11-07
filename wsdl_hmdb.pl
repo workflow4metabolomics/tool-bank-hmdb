@@ -11,7 +11,6 @@ use Carp qw (cluck croak carp) ;
 
 use Data::Dumper ;
 use Getopt::Long ;
-use Text::CSV ;
 use POSIX ;
 use FindBin ; ## Permet de localisez le repertoire du script perl d'origine
 
