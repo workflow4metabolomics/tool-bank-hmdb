@@ -260,7 +260,7 @@ sub get_matches_from_hmdb_ua {
 sub parse_hmdb_csv_results {
 	## Retrieve Values
     my $self = shift ;
-    my ( $csv, $masses ) = @_ ;
+    my ( $csv, $masses, $max_query ) = @_ ;
     
     my $test = 0 ;
     my ($query_mass,$compound_id,$formula,$compound_mass,$adduct,$adduct_type,$adduct_mass,$delta) = (0, undef, undef, undef, undef, undef, undef, undef) ;
@@ -297,8 +297,26 @@ sub parse_hmdb_csv_results {
     ## manage per query_mzs (keep query masses order by array)
     my @results = () ;
     foreach (@{$masses}) {
-    	if ($result_by_entry{$_}) { push (@results, $result_by_entry{$_}) ; }
+    	if ($result_by_entry{$_}) { 
+    	
+    		## cut all entries > $max_query	
+    		my @temp_entries = @{$result_by_entry{$_}} ;
+    		my @temp_cut = () ;
+    		my $current_query = 0 ;
+    		foreach (@temp_entries) {
+    			$current_query ++ ;
+    			if ($current_query > $max_query) {
+    				last ;
+    			}
+    			else {
+    				push (@temp_cut, $_) ;
+    			}	
+    		}
+    		push (@results, \@temp_cut) ; 
+#    		push (@results, $result_by_entry{$_}) ; 
+    	}
     	else {push (@results, [] ) ;} ;
+
     }
     return(\@results) ;
 }
