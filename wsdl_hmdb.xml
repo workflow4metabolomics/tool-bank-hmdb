@@ -34,7 +34,7 @@
             -mass "${input_type.mass}"
             -output_tabular "$variableMetadata2" -output_html "$HmdbOutWeb2" -output_xls "$HmdbOutXlsx2"
         #end if
-        -delta "$delta" -mode "$mode"
+        -delta "$delta" -mode "$mode" -maxquery "$maxquery"
         
   ]]></command>
   <inputs>
@@ -63,6 +63,7 @@
     </conditional>
     
     <param name="delta" label="Mass-to-charge ratio " type="float" value="0.05" min="0" max="10" size="10" help="Default value is 0.05 for HMDB (mass-to-charge ratio)"/>
+    <param name="maxquery" label="Number of maximum entries returned by the query " type="integer" value="20" min="1" max="50" size="10" help="Default value is 20 for each queried mz / max is 50"/>
     <param name="mode" label="Molecular Species " type="select" display="radio" help="">
       <option value="positive">Positif Mode</option>
       <option value="negative">Negatif Mode</option>
@@ -101,6 +102,7 @@
   		<param name="colfactor" value="2"/>
   		<param name="delta" value="0.001"/>
   		<param name="mode" value="neutral"/>
+  		<param name="maxquery" value="5"/>
   		<output name="variableMetadata" file="out_test01.tabular"/>
   		<output name="HmdbOutWeb" file="out_test01.html"/>
   		<output name="HmdbOutXlsx" file="out_test01.xlsx"/>
@@ -114,6 +116,7 @@
   		<param name="colfactor" value="2"/>
   		<param name="delta" value="0.001"/>
   		<param name="mode" value="positive"/>
+  		<param name="maxquery" value="5"/>
   		<output name="variableMetadata" file="out_test02.tabular"/>
   		<output name="HmdbOutWeb" file="out_test02.html"/>
   		<output name="HmdbOutXlsx" file="out_test02.xlsx"/>
@@ -124,6 +127,7 @@
   		<param name="mass" value="175.01 238.19 420.16 780.32 956.25 1100.45"/>
   		<param name="delta" value="0.05"/>
   		<param name="mode" value="positive"/>
+  		<param name="maxquery" value="5"/>
   		<output name="variableMetadata2" file="out_test03.tabular"/>
   		<output name="HmdbOutWeb2" file="out_test03.html"/>
   		<output name="HmdbOutXlsx2" file="out_test03.xlsx"/>
