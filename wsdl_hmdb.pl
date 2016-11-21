@@ -26,6 +26,7 @@ use lib::csv  qw( :ALL ) ;
 my ( $help ) = undef ;
 my ( $mass ) = undef ;
 my ( $masses_file, $col_id, $col_mass, $header_choice, $nbline_header ) = ( undef, undef, undef, undef, undef ) ;
+my $max_query = undef ;
 my ( $delta, $molecular_species, $out_tab, $out_html, $out_xls ) = ( undef, undef, undef, undef, undef ) ;
 
 
@@ -40,7 +41,8 @@ my ( $delta, $molecular_species, $out_tab, $out_html, $out_xls ) = ( undef, unde
 				"nblineheader:i"	=> \$nbline_header,		## numbre of header line present in file
 				"colfactor:i"		=> \$col_mass,			## Column id for retrieve formula list in tabular file
 				"delta:f"			=> \$delta,
-				"mode:s"			=> \$molecular_species,	## Molecular species (positive/negative/neutral) 
+				"mode:s"			=> \$molecular_species,	## Molecular species (positive/negative/neutral)
+				"maxquery:i"		=> \$max_query, 		## Maximum query return (default is 20 entries by query // min 1 & max 50 )
 				"output_tabular:s"	=> \$out_tab,			## option : path to the ouput (tabular : input+results )
 				"output_html|v:s"	=> \$out_html,			## option : path to the results view (output2)
 				"output_xlsx:s"		=> \$out_xls,			## option : path to the xls-like format output
@@ -65,6 +67,10 @@ foreach my $conf ( <$binPath/*.cfg> ) {
 
 ## -------------- HTML template file ------------------------ :
 foreach my $html_template ( <$binPath/*.tmpl> ) { $CONF->{'HTML_TEMPLATE'} = $html_template ; }
+
+if (!defined $max_query) {
+	$max_query = $CONF->{'HMDB_MAX_QUERY'} ;
+}
 
 
 ## --------------- Global parameters ---------------- :
@@ -121,8 +127,8 @@ if ( ( defined $delta ) and ( $delta > 0 ) and ( defined $molecular_species ) an
 		my $result = undef ;
 		my ( $hmdb_masses, $nb_masses_to_submit ) = $oHmdb->prepare_multi_masses_query($mzs) ;
 		$hmdb_pages = $oHmdb->get_matches_from_hmdb_ua($hmdb_masses, $delta, $molecular_species) ;
-		($result) = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $mzs) ; ## hash format result
-		
+		($result) = $oHmdb->parse_hmdb_csv_results($hmdb_pages, $mzs, $max_query) ; ## hash format result
+		## This previous step return results with cutoff on the number of entries returned ! 
 		$results = [ @$results, @$result ] ;
 	}
 	
