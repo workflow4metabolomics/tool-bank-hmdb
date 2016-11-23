@@ -1,5 +1,5 @@
 categories: [Metabolomics]
-description: '[W4M][LC-MS] HMDB database MS Search Package - Annotation - Returns
+description: '[W4M][Metabolomics][LC-MS] HMDB database MS Search Package - Annotation - Returns
   annotation results (adducts and metabolites) from The Human Metabolome Database.'
 homepage_url: http://workflow4metabolomics.org
 long_description: 'Part of the W4M project: http://workflow4metabolomics.org / HMDB:
