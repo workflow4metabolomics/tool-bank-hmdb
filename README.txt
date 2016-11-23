@@ -1,5 +1,5 @@
 ## ****** HMDB environnemnt : ****** ##
-# version January 2016 M Landi / F Giacomoni - INRA - METABOHUB - workflow4metabolomics.org core team
+# version Nov 2016 M Landi / F Giacomoni - INRA - METABOHUB - workflow4metabolomics.org core team
 
 ## --- PERL compilator / libraries : --- ##
 $ perl -v
@@ -16,22 +16,25 @@ use FindBin ;
 use Encode;
 
 # libs CPAN PERL : 
-$ perl -e 'use Text::CSV'
-$ perl -e 'use LWP::Simple'
-$ perl -e 'use URI::URL'
-$ perl -e 'use SOAP::Lite'
-$ perl -e 'use HTML::Template'
+$ perl -e 'use Text::CSV' 	- OK
+use LWP::Simple;		- OK
+use LWP::UserAgent;		- OK
+use URI::URL;			- OK
+use SOAP::Lite;			- OK
+use HTML::Template ;		- OK
+use XML::Twig ; 	- OK
+
 $ sudo perl -MCPAN -e shell
 cpan> install Text::CSV
-cpan> install LWP::Simple
-cpan> install URI::URL
-cpan> install SOAP::Lite
-cpan>  install HTML::Template
 
 # libs pfem PERL : this lib were included in lib dir.
 use conf::conf  qw( :ALL ) ;
 use formats::csv  qw( :ALL ) ;
 --
+
+## --- Conda compliant --- ##
+This tool and its PERL dependencies are "Conda compliant".
+The requirements section in the Xml file is still commented, waiting for "Conda" deployment improvement in Galaxy project.
 
 ## --- R bin and Packages : --- ##
 No interaction with R
@@ -54,7 +57,7 @@ hmdb.png
 --
 
 ## --- DATASETS OR TUTORIAL --- ##
-Please find help on W4M : 
+Please find help on W4M: http://workflow4metabolomics.org/howto 
 --
 
 ## --- ??? COMMENTS ??? --- ##

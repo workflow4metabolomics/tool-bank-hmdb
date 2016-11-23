@@ -49,7 +49,7 @@ sub new {
 
 =head2 METHOD as_conf
 
-	## Description : permet de cr�er l'object conf � partir d'un fichier de conf de type KEY=VALUE
+	## Description : permet de creer l'object conf a partir d'un fichier de conf de type KEY=VALUE
 	## Input : $file
 	## Ouput : $oConf (a hash)
 	## Usage : my ( $oConf ) = as_conf( $file ) ;
@@ -131,7 +131,7 @@ sub as_conf_list {
 
 =head2 METHOD get_value_from_conf
 
-	## Description : permet de retourner une valeur du hash de conf � partir d'une key
+	## Description : permet de retourner une valeur du hash de conf a partir d'une key
 	## Input : $oConf, $Key
 	## Ouput : $Value
 	## Usage : my ( $Value ) = get_value_from_conf( $oConf, $Key ) ;
@@ -159,7 +159,7 @@ sub get_value_from_conf {
 
 =head2 METHOD get_value_from_conf
 
-	## Description : permet de retourner une valeur du hash de conf � partir d'une key
+	## Description : permet de retourner une valeur du hash de conf a partir d'une key
 	## Input : $oConf, $Key
 	## Ouput : $Value
 	## Usage : my ( $Value ) = get_value_from_conf( $oConf, $Key ) ;
@@ -190,7 +190,7 @@ sub split_value_from_conf {
 
 =head2 METHOD check_path_and_file
 
-	## Description : permet de v�rifier les path et la pr�sence des exe d�crits dans le file conf. Bloque le script en cas de probleme
+	## Description : permet de verifier les path et la presence des exe decrits dans le file conf. Bloque le script en cas de probleme
 	## Input : $oConfs
 	## Ouput : NA
 	## Usage : &get_value_from_conf( $oConf ) ;
