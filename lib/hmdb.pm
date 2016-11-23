@@ -11,6 +11,8 @@ use URI::URL;
 use SOAP::Lite;
 use Encode;
 use HTML::Template ;
+use XML::Twig ;
+use Text::CSV ;
 
 use Data::Dumper ;
 
@@ -18,8 +20,8 @@ use vars qw($VERSION @ISA @EXPORT %EXPORT_TAGS);
 
 our $VERSION = "1.0";
 our @ISA = qw(Exporter);
-our @EXPORT = qw( extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass );
-our %EXPORT_TAGS = ( ALL => [qw( extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass )] );
+our @EXPORT = qw( map_suppl_data_on_hmdb_results get_unik_ids_from_results get_hmdb_metabocard_from_id extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass );
+our %EXPORT_TAGS = ( ALL => [qw( map_suppl_data_on_hmdb_results get_unik_ids_from_results get_hmdb_metabocard_from_id extract_sub_mz_lists test_matches_from_hmdb_ua prepare_multi_masses_query get_matches_from_hmdb_ua parse_hmdb_csv_results set_html_tbody_object add_mz_to_tbody_object add_entries_to_tbody_object write_html_skel set_lm_matrix_object set_hmdb_matrix_object_with_ids add_lm_matrix_to_input_matrix write_csv_skel write_csv_one_mass )] );
 
 =head1 NAME
 
@@ -258,7 +260,7 @@ sub get_matches_from_hmdb_ua {
 sub parse_hmdb_csv_results {
 	## Retrieve Values
     my $self = shift ;
-    my ( $csv, $masses ) = @_ ;
+    my ( $csv, $masses, $max_query ) = @_ ;
     
     my $test = 0 ;
     my ($query_mass,$compound_id,$formula,$compound_mass,$adduct,$adduct_type,$adduct_mass,$delta) = (0, undef, undef, undef, undef, undef, undef, undef) ;
@@ -295,8 +297,26 @@ sub parse_hmdb_csv_results {
     ## manage per query_mzs (keep query masses order by array)
     my @results = () ;
     foreach (@{$masses}) {
-    	if ($result_by_entry{$_}) { push (@results, $result_by_entry{$_}) ; }
+    	if ($result_by_entry{$_}) { 
+    	
+    		## cut all entries > $max_query	
+    		my @temp_entries = @{$result_by_entry{$_}} ;
+    		my @temp_cut = () ;
+    		my $current_query = 0 ;
+    		foreach (@temp_entries) {
+    			$current_query ++ ;
+    			if ($current_query > $max_query) {
+    				last ;
+    			}
+    			else {
+    				push (@temp_cut, $_) ;
+    			}	
+    		}
+    		push (@results, \@temp_cut) ; 
+#    		push (@results, $result_by_entry{$_}) ; 
+    	}
     	else {push (@results, [] ) ;} ;
+
     }
     return(\@results) ;
 }
@@ -380,6 +400,202 @@ sub parse_hmdb_page_results {
     return(\@results) ;
 }
 ## END of SUB
+
+
+=head2 METHOD get_unik_ids_from_results
+
+	## Description : get all unik ids from the hmdb result object
+	## Input : $results
+	## Output : $ids
+	## Usage : my ( $ids ) = get_unik_ids_from_results ( $results ) ;
+	
+=cut
+## START of SUB
+sub get_unik_ids_from_results {
+    ## Retrieve Values
+    my $self = shift ;
+    my ( $results ) = @_;
+    my ( %ids ) = ( () ) ;
+    
+    foreach my $result (@{$results}) {
+    	
+    	foreach my $entries (@{$result}) {
+    		
+    		if ( ($entries->{'ENTRY_ENTRY_ID'}) and ($entries->{'ENTRY_ENTRY_ID'} ne '' ) ) {
+    			$ids{$entries->{'ENTRY_ENTRY_ID'}} = 1 ;
+    		}
+    	}
+    }
+    
+    return (\%ids) ;
+}
+### END of SUB
+
+
+
+=head2 METHOD get_hmdb_metabocard_from_id
+
+	## Description : get a metabocard (xml format from an ID on HMDB)
+	## Input : $ids
+	## Output : $metabocard_features
+	## Usage : my ( $metabocard_features ) = get_hmdb_metabocard_from_id ( $ids ) ;
+	
+=cut
+## START of SUB
+sub get_hmdb_metabocard_from_id {
+    ## Retrieve Values
+    my $self = shift ;
+    my ( $ids, $hmdb_url ) = @_;
+    my ( %metabocard_features ) = ( () ) ;
+    my $query = undef ;
+    
+    ## structure %metabocard_features
+    # metabolite_id = (
+    #	'metabolite_name' => '__name__',
+    #	'metabolite_inchi' => '__inchi__',
+    #	'metabolite_logp' => '__logp-ALOGPS__',
+    #
+    # )
+    
+    
+    if( (defined $ids) and  ($ids > 0 ) ) {
+    	
+    	foreach my $id (keys %{$ids}) {
+			
+#			print "\n============== > $id **********************\n " ;
+			my $twig = undef ;
+			
+			if (defined $hmdb_url) {
+				$query = $hmdb_url.$id.'.xml' ;
+				
+				## test the header if exists
+				my $response = head($query) ;
+				
+				if (!defined $response) {
+					$metabocard_features{$id}{'metabolite_name'} = undef ;
+					$metabocard_features{$id}{'metabolite_inchi'} = undef ;
+					$metabocard_features{$id}{'metabolite_logp'} = undef ;
+					## Need to be improve to manage http 404 or other response diff than 200
+				}
+				elsif ($response->is_success) {
+					
+					$twig = XML::Twig->nparse_ppe(
+					
+						twig_handlers => { 
+							# metabolite name
+							'metabolite/name' => sub { $metabocard_features{$id}{'metabolite_name'} = $_ -> text_only ; } ,
+							# metabolite inchi
+							'metabolite/inchi' => sub { $metabocard_features{$id}{'metabolite_inchi'} = $_ -> text_only ; } ,
+							## metabolite logP
+							'metabolite/predicted_properties/property' => sub {
+								
+								my ($kind, $source, $value ) = ( undef, undef, undef ) ;
+								
+								if (defined $_->children ) {
+    								foreach my $field ($_->children) {
+    									if ( $field->name eq 'kind') 		{ $kind = $field->text ; }
+    									elsif ( $field->name eq 'source') 	{ $source = $field->text ; }
+    									elsif ( $field->name eq 'value') 	{ $value = $field->text ; }
+    									
+    									if (defined $source ) {
+    										if ( ( $kind eq 'logp' ) and ( $source eq 'ALOGPS' ) ) {
+												$metabocard_features{$id}{'metabolite_logp'} = $value ;
+											}
+											($kind, $source, $value ) = ( undef, undef, undef ) ;
+    									}
+    								}
+								}
+							}
+						}, 
+						pretty_print => 'indented', 
+						error_context => 1, $query
+					);
+						
+#				    $twig->print;
+					$twig->purge ;
+				    
+				    if (!$@) {
+				    	
+				    }
+				    else {
+				    	warn $@ ;
+				    }
+				}
+			}
+			else {
+				warn "The hmdb metabocard url is not defined\n" ;
+				last;
+			}
+    	}
+    }
+    else {
+    	warn "The HMDB ids list from HMDB is empty - No metabocard found\n" ;
+    }
+    
+#    print Dumper %metabocard_features ;
+    return (\%metabocard_features) ;
+}
+### END of SUB
+
+
+=head2 METHOD map_suppl_data_on_hmdb_results
+
+	## Description : map supplementary data with already collected results with hmdb search
+	## Input : $results, $features
+	## Output : $results
+	## Usage : my ( $results ) = map_suppl_data_on_hmdb_results ( $results, $features ) ;
+	
+=cut
+## START of SUB
+sub map_suppl_data_on_hmdb_results {
+    ## Retrieve Values
+    my $self = shift ;
+    my ( $results, $features ) = @_;
+    my ( @more_results ) = ( () ) ;
+    
+    @more_results = @{$results} ; ## Dump array ref to map
+    
+    foreach my $result (@more_results) {
+    	
+    	foreach my $entries (@{$result}) {
+    		
+    		if ( ($entries->{'ENTRY_ENTRY_ID'}) and ($entries->{'ENTRY_ENTRY_ID'} ne '' ) ) {
+    			## check that we have a ID for mapping
+    			my $current_id = $entries->{'ENTRY_ENTRY_ID'} ;
+    			if ($features->{"$current_id"}) {
+    				## Metabolite NAME
+    				if (defined $features->{"$current_id"}{'metabolite_name'} ) {
+    					$entries->{'ENTRY_ENTRY_NAME'} = $features->{"$current_id"}{'metabolite_name'}
+    				}
+    				else {
+    					$entries->{'ENTRY_ENTRY_NAME'} = 'UNKNOWN' ;
+    				}
+    				## Metabolite INCHI
+    				if (defined $features->{"$current_id"}{'metabolite_inchi'} ) {
+    					$entries->{'ENTRY_ENTRY_INCHI'} = $features->{"$current_id"}{'metabolite_inchi'}
+    				}
+    				else {
+    					$entries->{'ENTRY_ENTRY_INCHI'} = 'NA' ;
+    				}
+    				## Metabolite LOGP
+    				if (defined $features->{"$current_id"}{'metabolite_logp'} ) {
+    					$entries->{'ENTRY_ENTRY_LOGP'} = $features->{"$current_id"}{'metabolite_logp'}
+    				}
+    				else {
+    					$entries->{'ENTRY_ENTRY_LOGP'} = 'NA' ;
+    				}
+    			}
+    			else {
+    				warn "This HMDB id doesn't match any collected ids\n" ;
+    			}
+    		}
+    	}
+    }
+    
+    return (\@more_results) ;
+}
+### END of SUB
+
 
 =head2 METHOD set_html_tbody_object
 
@@ -505,6 +721,7 @@ sub add_entries_to_tbody_object {
     				
     				my %entry = (
 		    			ENTRY_COLOR => $tbody_object->[$index_page]{MASSES}[$index_mz]{MZ_COLOR},
+		    			ENTRY_ENTRY_NAME => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_NAME}, 	
 		   				ENTRY_ENTRY_ID => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_ID},
 		   				ENTRY_ENTRY_ID2 => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_ID},
 						ENTRY_FORMULA => $entries->[$index_mz_continous][$index_entry]{ENTRY_FORMULA},
@@ -512,7 +729,9 @@ sub add_entries_to_tbody_object {
 						ENTRY_ADDUCT => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT},
 						ENTRY_ADDUCT_TYPE => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT_TYPE},
 						ENTRY_ADDUCT_MZ => $entries->[$index_mz_continous][$index_entry]{ENTRY_ADDUCT_MZ},
-						ENTRY_DELTA => $entries->[$index_mz_continous][$index_entry]{ENTRY_DELTA},   			
+						ENTRY_DELTA => $entries->[$index_mz_continous][$index_entry]{ENTRY_DELTA},
+						ENTRY_ENTRY_INCHI => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_INCHI}, 		
+						ENTRY_ENTRY_LOGP => $entries->[$index_mz_continous][$index_entry]{ENTRY_ENTRY_LOGP},	
 		    		) ;
 		    		
 	    			push ( @{ $tbody_object->[$index_page]{MASSES}[$index_mz]{ENTRIES} }, \%entry) ;
@@ -523,14 +742,17 @@ sub add_entries_to_tbody_object {
     		if ($check_noentry == 0 ) {
     			my %entry = (
 		    			ENTRY_COLOR => $tbody_object->[$index_page]{MASSES}[$index_mz]{MZ_COLOR},
-		   				ENTRY_ENTRY_ID => 'No_result_found_on_HMDB',
+		    			ENTRY_ENTRY_NAME  => 'UNKNOWN',
+		   				ENTRY_ENTRY_ID => 'NONE',
 		   				ENTRY_ENTRY_ID2 => '',
 						ENTRY_FORMULA => 'n/a',
 						ENTRY_CPD_MZ => 'n/a',
 						ENTRY_ADDUCT => 'n/a',
 						ENTRY_ADDUCT_TYPE => 'n/a',
 						ENTRY_ADDUCT_MZ => 'n/a',
-						ENTRY_DELTA => 0,   			
+						ENTRY_DELTA => 0,
+						ENTRY_ENTRY_INCHI => 'n/a',
+						ENTRY_ENTRY_LOGP => 'n/a',
 		    		) ;
 		    		push ( @{ $tbody_object->[$index_page]{MASSES}[$index_mz]{ENTRIES} }, \%entry) ;
     		}
@@ -643,7 +865,7 @@ sub set_lm_matrix_object {
 	    	$check_rebond = 0 ; ## reinit double control
 	    	$index_entries++ ;
 	    } ## end foreach
-	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on_HMDB' ; }
+	    if ( !defined $cluster_col ) { $cluster_col = 'NONE' ; }
     	push (@clusters, $cluster_col) ;
     	push (@hmdb_matrix, \@clusters) ;
     	$index_mz++ ;
@@ -670,6 +892,9 @@ sub set_hmdb_matrix_object_with_ids {
     
     if ( defined $header ) {
     	my @headers = () ;
+    	
+    	## redefined the header hmdb(delta::name::mz::formula::adduct::id)
+    	$header = 'hmdb(delta::name::mz::formula::adduct::id)' ;
     	push @headers, $header ;
     	push @hmdb_matrix, \@headers ;
     }
@@ -697,19 +922,27 @@ sub set_hmdb_matrix_object_with_ids {
 	    	if ( $check_rebond == 0 ) {
     				
 	    		push ( @anti_redondant, $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID} ) ;
+	    		##
+	    		my $hmdb_name = $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_NAME}  ;
 	    		my $hmdb_id = $entries->[$index_mz][$index_entries]{ENTRY_ENTRY_ID}  ;
+	    		my $hmdb_formula = $entries->[$index_mz][$index_entries]{ENTRY_FORMULA}  ;
+	    		my $hmdb_cpd_mz = $entries->[$index_mz][$index_entries]{ENTRY_CPD_MZ}  ;
+	    		my $hmdb_adduct = $entries->[$index_mz][$index_entries]{ENTRY_ADDUCT}  ;
+	    		my $hmdb_delta = $entries->[$index_mz][$index_entries]{ENTRY_DELTA}  ;
 		    	
-		    	## METLIN data display model -- IDs ONLY !!
-		   		## entry1=VAR1::VAR2::VAR3::VAR4|entry2=VAR1::VAR2::VAR3::VAR4|...
+		    	## METLIN data display model
+		   		## entry1= ENTRY_DELTA::ENTRY_ENTRY_NAME::ENTRY_CPD_MZ::ENTRY_FORMULA::ENTRY_ADDUCT::ENTRY_ENTRY_ID | entry2=VAR1::VAR2::VAR3::VAR4|...
+		   		my $entry = $hmdb_delta.'::['."$hmdb_name".']::'.$hmdb_cpd_mz.'::'.$hmdb_formula.'::['.$hmdb_adduct.']::'.$hmdb_id ;
+		   		
 		   		# manage final pipe
-		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $hmdb_id.'|' ; }
-		   		else { 						   			$cluster_col .= $hmdb_id ; 	}
+		   		if ($index_entries < $nb_entries-1 ) { 	$cluster_col .= $entry.' | ' ; }
+		   		else { 						   			$cluster_col .= $entry ; 	}
 	    		
 	    	}
 	    	$check_rebond = 0 ; ## reinit double control
 	    	$index_entries++ ;
 	    } ## end foreach
-	    if ( !defined $cluster_col ) { $cluster_col = 'No_result_found_on_HMDB' ; }
+	    if ( !defined $cluster_col ) { $cluster_col = 'NONE' ; }
     	push (@clusters, $cluster_col) ;
     	push (@hmdb_matrix, \@clusters) ;
     	$index_mz++ ;
@@ -773,8 +1006,8 @@ sub write_csv_skel {
 	## Retrieve Values
     my $self = shift ;
     my ( $csv_file, $rows ) = @_ ;
-    
-    my $ocsv = lib::csv::new() ;
+
+    my $ocsv = lib::csv::new( {is_binary => 1 , quote_binary => 0, quote_char => undef }) ;
 	my $csv = $ocsv->get_csv_object("\t") ;
 	$ocsv->write_csv_from_arrays($csv, $$csv_file, $rows) ;
     
@@ -797,7 +1030,7 @@ sub write_csv_one_mass {
     my ( $masses, $ids, $results, $file,  ) = @_ ;
 
     open(CSV, '>:utf8', "$file") or die "Cant' create the file $file\n" ;
-    print CSV "ID\tMASS_SUBMIT\tHMDB_ID\tCPD_FORMULA\tCPD_MW\tDELTA\n" ;
+    print CSV "ID\tQuery(Da)\tDelta\tMetabolite_Name\tCpd_MW(Da)\tFormula\tAdduct\tAdduct_MW(Da)\tHMDB_ID\n" ;
     	
     my $i = 0 ;
     	
@@ -826,21 +1059,40 @@ sub write_csv_one_mass {
 	    			
 		    		push ( @anti_redondant, $entry->{ENTRY_ENTRY_ID} ) ;
 
-	    			print CSV "$id\t$mass\t$entry->{ENTRY_ENTRY_ID}\t" ;
+	    			print CSV "$id\t$mass\t" ;
+	    			
+	    			## print delta
+	    			if ( $entry->{ENTRY_DELTA} ) { print CSV "$entry->{ENTRY_DELTA}\t" ; }
+	    			else { 							 print CSV "0\t" ; }
+	    			
 	    			## print cpd name
+	    			if ( $entry->{ENTRY_ENTRY_NAME} ) { print CSV "[$entry->{ENTRY_ENTRY_NAME}]\t" ; }
+	    			else { 							 print CSV "UNKNOWN\t" ; }
+	    			
+	    			## print cpd mz
+	    			if ( $entry->{ENTRY_CPD_MZ} ) { print CSV "$entry->{ENTRY_CPD_MZ}\t" ; }
+	    			else { 							 print CSV "N/A\t" ; }
+	    			
+	    			## print cpd formula
 	    			if ( $entry->{ENTRY_FORMULA} ) { print CSV "$entry->{ENTRY_FORMULA}\t" ; }
 	    			else { 							 print CSV "N/A\t" ; }
-	    			## print cpd mw
-	    			if ( $entry->{ENTRY_CPD_MZ} ) { print CSV "$entry->{ENTRY_CPD_MZ}\t" ; }
-	    			else { 							print CSV "N/A\t" ; }
-	    			## print delta
-	    			if ( $entry->{ENTRY_DELTA} ) {  print CSV "$entry->{ENTRY_DELTA}\n" ; }
+	    			
+	    			## print adduct
+	    			if ( $entry->{ENTRY_ADDUCT} ) { print CSV "[$entry->{ENTRY_ADDUCT}]\t" ; }
+	    			else { 							 print CSV "N/A\t" ; }
+	    			
+	    			## print adduct mz
+	    			if ( $entry->{ENTRY_ADDUCT_MZ} ) { print CSV "$entry->{ENTRY_ADDUCT_MZ}\t" ; }
+	    			else { 							 print CSV "N/A\t" ; }
+	    			
+	    			## print cpd id
+	    			if ( $entry->{ENTRY_ENTRY_ID} ) { print CSV "$entry->{ENTRY_ENTRY_ID}\n" ; }
 	    			else { 							print CSV "N/A\n" ; }
 		    	}
 		    	$check_rebond = 0 ; ## reinit double control
     		} ## end foreach
     		if ($check_noentry == 0 ) {
-    			print CSV "$id\t$mass\t".'No_result_found_on_HMDB'."\tn/a\tn/a\t0\n" ;
+    			print CSV "$id\t$mass\t0\tUNKNOWN\tN/A\tN/A\tN/A\tN/A\tN/A\n" ;
     		}
     	}
     	$i++ ;
@@ -886,5 +1138,7 @@ version 2 : 27 / 01 / 2014
 version 3 : 19 / 11 / 2014
 
 version 4 : 28 / 01 / 2016
+
+version 5 : 02 / 11 /2016
 
 =cut

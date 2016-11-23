@@ -1,9 +1,27 @@
-<tool id="wsdl_hmdb" name="HMDB MS search" version="2016-01-28">
+<tool id="wsdl_hmdb" name="HMDB MS search" version="2016-11-28">
   <description>
         search by masses on HMDB online bank
   </description>
-  <command interpreter="perl">
-        wsdl_hmdb.pl
+  
+  <requirements>
+  <!-- Waiting for conda improvement in Galaxy
+      <requirement type="package" version="1.19">perl-soap-lite</requirement>
+      <requirement type="package" version="6.15">perl-lwp-simple</requirement>
+	  <requirement type="package" version="6.15">perl-libwww-perl</requirement>
+      <requirement type="package" version="2.95">perl-html-template</requirement>
+      <requirement type="package" version="1.71">perl-uri</requirement>
+      <requirement type="package" version="1.33">perl-text-csv</requirement>
+      <requirement type="package" version="3.49">perl-xml-twig</requirement>
+  -->
+  </requirements>
+  
+  <stdio>
+      <exit_code range="1" level="fatal" />
+  </stdio>
+  
+  
+  <command><![CDATA[
+        perl $__tool_directory__/wsdl_hmdb.pl
         #if str($input_type.choice) == "YES":
             -masses "${input_type.masses}"
             -header_choice "${input_type.header.header_choice}"
@@ -11,12 +29,14 @@
                 -nblineheader "${$input_type.header.nbHeader}"
             #end if
             -colfactor "${input_type.colfactor}"
+            -output_tabular "$variableMetadata" -output_html "$HmdbOutWeb" -output_xls "$HmdbOutXlsx"
         #else:
             -mass "${input_type.mass}"
+            -output_tabular "$variableMetadata2" -output_html "$HmdbOutWeb2" -output_xls "$HmdbOutXlsx2"
         #end if
-        -delta "$delta" -mode "$mode"
-        -output "$variableMetadata" -view "$HmdbResView" -outputxls "$HmdbResXls"
-  </command>
+        -delta "$delta" -mode "$mode" -maxquery "$maxquery"
+        
+  ]]></command>
   <inputs>
     <conditional name="input_type">
       <param name="choice" type="select" label="Would you use a file " help="if 'NO' is selected then one or more mass(es) must be entered manually">
@@ -43,6 +63,7 @@
     </conditional>
     
     <param name="delta" label="Mass-to-charge ratio " type="float" value="0.05" min="0" max="10" size="10" help="Default value is 0.05 for HMDB (mass-to-charge ratio)"/>
+    <param name="maxquery" label="Number of maximum entries returned by the query " type="integer" value="20" min="1" max="50" size="10" help="Default value is 20 for each queried mz / max is 50"/>
     <param name="mode" label="Molecular Species " type="select" display="radio" help="">
       <option value="positive">Positif Mode</option>
       <option value="negative">Negatif Mode</option>
@@ -51,37 +72,54 @@
   </inputs>
   
   <outputs>
-    <data name="variableMetadata" format="tabular" label="${tool.name}_TSV"/>
-    <data name="HmdbResView" format="html" label="${tool.name}_VIEW"/>
-    <data name="HmdbResXls" label="${tool.name}_XLS" format="tabular" />
+    <data name="variableMetadata" format="tabular" label="${input_type.masses.name[:-6]}.HMDB.tabular">
+    	<filter>input_type['choice'] == "YES"</filter>
+   	</data>
+    <data name="HmdbOutWeb" format="html" label="${input_type.masses.name[:-6]}.HMDB_WEB.html">
+    	<filter>input_type['choice'] == "YES"</filter>
+   	</data>
+    <data name="HmdbOutXlsx" label="${input_type.masses.name[:-6]}.HMDB.xlsx" format="tabular">
+    	<filter>input_type['choice'] == "YES"</filter>
+   	</data>
+    <data name="variableMetadata2" format="tabular" label="HMDB.tabular">
+    	<filter>input_type['choice'] == "NO"</filter>
+   	</data>
+    <data name="HmdbOutWeb2" format="html" label="HMDB_WEB.html">
+    	<filter>input_type['choice'] == "NO"</filter>
+   	</data>
+    <data name="HmdbOutXlsx2" label="HMDB.xlsx" format="tabular">
+    	<filter>input_type['choice'] == "NO"</filter>
+   	</data>
   </outputs>
   
   <tests>
   	<test>
   		<!--test 01 no result - fake-mzrt-input-with-id -->
   		<param name="choice" value="YES"/>
-  		<param name="masses" value="input_test01_fake-mzrt-input-with-id.tsv"/>
+  		<param name="masses" value="input_test01_fake-mzrt-input-with-id.tabular"/>
   		<param name="header_choice" value="yes"/>
   		<param name="nblineheader" value="1"/>
   		<param name="colfactor" value="2"/>
   		<param name="delta" value="0.001"/>
   		<param name="mode" value="neutral"/>
-  		<output name="variableMetadata" file="out_test01.tsv"/>
-  		<output name="HmdbResView" file="out_test01.html"/>
-  		<output name="HmdbResXls" file="out_test01.csv"/>
+  		<param name="maxquery" value="5"/>
+  		<output name="variableMetadata" file="out_test01.tabular"/>
+  		<output name="HmdbOutWeb" file="out_test01.html"/>
+  		<output name="HmdbOutXlsx" file="out_test01.xlsx"/>
   	</test>
   	<test>
   		<!--test 02 : some results - with-mzrt-input-with-id file-->
   		<param name="choice" value="YES"/>
-  		<param name="masses" value="input_test02_mzrt-input-with-id.tsv"/>
+  		<param name="masses" value="input_test02_mzrt-input-with-id.tabular"/>
   		<param name="header_choice" value="yes"/>
   		<param name="nblineheader" value="1"/>
   		<param name="colfactor" value="2"/>
   		<param name="delta" value="0.001"/>
   		<param name="mode" value="positive"/>
-  		<output name="variableMetadata" file="out_test02.tsv"/>
-  		<output name="HmdbResView" file="out_test02.html"/>
-  		<output name="HmdbResXls" file="out_test02.csv"/>
+  		<param name="maxquery" value="5"/>
+  		<output name="variableMetadata" file="out_test02.tabular"/>
+  		<output name="HmdbOutWeb" file="out_test02.html"/>
+  		<output name="HmdbOutXlsx" file="out_test02.xlsx"/>
   	</test>
   	<test>
   		<!--test 03 : some results - with-mz list in manual mass mode-->
@@ -89,13 +127,14 @@
   		<param name="mass" value="175.01 238.19 420.16 780.32 956.25 1100.45"/>
   		<param name="delta" value="0.05"/>
   		<param name="mode" value="positive"/>
-  		<output name="variableMetadata" file="out_test03.tsv"/>
-  		<output name="HmdbResView" file="out_test03.html"/>
-  		<output name="HmdbResXls" file="out_test03.csv"/>
+  		<param name="maxquery" value="5"/>
+  		<output name="variableMetadata2" file="out_test03.tabular"/>
+  		<output name="HmdbOutWeb2" file="out_test03.html"/>
+  		<output name="HmdbOutXlsx2" file="out_test03.xlsx"/>
   	</test>
   </tests>
 
-  <help>
+  <help><![CDATA[
 
 .. class:: infomark
 
@@ -105,8 +144,8 @@
 
 .. class:: infomark
 
-**Please cite** If you use this tool, please cite 
-  | `Wishart DS, Jewison T, Guo AC, Wilson M, Knox C, et al., HMDB 3.0—The Human Metabolome Database in 2013. Nucleic Acids Res. 2013. &lt;http://www.ncbi.nlm.nih.gov/pubmed/23161693&gt;`_
+**Please cite** If you use this tool, please add the following reference
+  | Wishart DS, Jewison T, Guo AC, Wilson M, Knox C, et al., HMDB 3.0 — The Human Metabolome Database in 2013. Nucleic Acids Res. 2013.
 
 
 ---------------------------------------------------
@@ -208,11 +247,11 @@ Output files
 ------------
 
 Two types of files
-	| wsdl_hmdb_VIEW.HTML : for viewing result via HTML.
+	| HMDB_WEB.HTML: for viewing result via HTML.
 	| 
-	| wsdl_hmdb_TSV.tabular : for linking with others modules.
+	| HMDB_TABULAR.tabular: for linking with others modules.
 	| 
-	| an excel-like output will be available. 
+	| HMDB_XLSX.xlsx: an excel-like output permitting manual annotation cleaning. 
 	| 
 	
 ---------------------------------------------------
@@ -225,7 +264,7 @@ Working example
 
 .. class:: warningmark
 
-Refer to the corresponding `"W4M HowTo" &lt;http://workflow4metabolomics.org/howto&gt;`_ page:
+Refer to the corresponding W4M HowTo section: http://workflow4metabolomics.org/howto
  | Format Data For Postprocessing
  | Perform LCMS Annotations
 
@@ -236,5 +275,5 @@ And their "W4M courses 2015":
  | Annotation Banks - Annotation  
 	
 
-	</help>
+	]]></help>
 </tool>
