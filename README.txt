@@ -22,6 +22,7 @@ use LWP::UserAgent;		- OK
 use URI::URL;			- OK
 use SOAP::Lite;			- OK
 use HTML::Template ;		- OK
+use XML::Twig ; 	- OK
 
 $ sudo perl -MCPAN -e shell
 cpan> install Text::CSV
@@ -30,6 +31,10 @@ cpan> install Text::CSV
 use conf::conf  qw( :ALL ) ;
 use formats::csv  qw( :ALL ) ;
 --
+
+## --- Conda compliant --- ##
+This tool and its PERL dependencies are "Conda compliant".
+The requirements section in the Xml file is still commented, waiting for "Conda" deployment improvement in Galaxy project.
 
 ## --- R bin and Packages : --- ##
 No interaction with R
@@ -52,7 +57,7 @@ hmdb.png
 --
 
 ## --- DATASETS OR TUTORIAL --- ##
-Please find help on W4M : 
+Please find help on W4M: http://workflow4metabolomics.org/howto 
 --
 
 ## --- ??? COMMENTS ??? --- ##
