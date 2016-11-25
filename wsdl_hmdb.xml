@@ -78,7 +78,7 @@
     <data name="HmdbOutWeb" format="html" label="${input_type.masses.name[:-6]}.HMDB_WEB.html">
     	<filter>input_type['choice'] == "YES"</filter>
    	</data>
-    <data name="HmdbOutXlsx" label="${input_type.masses.name[:-6]}.HMDB.xlsx" format="tabular">
+    <data name="HmdbOutXlsx" label="${input_type.masses.name[:-6]}.HMDB_XLS.txt" format="tabular">
     	<filter>input_type['choice'] == "YES"</filter>
    	</data>
     <data name="variableMetadata2" format="tabular" label="HMDB.tabular">
@@ -87,7 +87,7 @@
     <data name="HmdbOutWeb2" format="html" label="HMDB_WEB.html">
     	<filter>input_type['choice'] == "NO"</filter>
    	</data>
-    <data name="HmdbOutXlsx2" label="HMDB.xlsx" format="tabular">
+    <data name="HmdbOutXlsx2" label="HMDB_XLS.txt" format="tabular">
     	<filter>input_type['choice'] == "NO"</filter>
    	</data>
   </outputs>
@@ -105,7 +105,7 @@
   		<param name="maxquery" value="5"/>
   		<output name="variableMetadata" file="out_test01.tabular"/>
   		<output name="HmdbOutWeb" file="out_test01.html"/>
-  		<output name="HmdbOutXlsx" file="out_test01.xlsx"/>
+  		<output name="HmdbOutXlsx" file="out_test01.txt"/>
   	</test>
   	<test>
   		<!--test 02 : some results - with-mzrt-input-with-id file-->
@@ -119,7 +119,7 @@
   		<param name="maxquery" value="5"/>
   		<output name="variableMetadata" file="out_test02.tabular"/>
   		<output name="HmdbOutWeb" file="out_test02.html"/>
-  		<output name="HmdbOutXlsx" file="out_test02.xlsx"/>
+  		<output name="HmdbOutXlsx" file="out_test02.txt"/>
   	</test>
   	<test>
   		<!--test 03 : some results - with-mz list in manual mass mode-->
@@ -130,7 +130,7 @@
   		<param name="maxquery" value="5"/>
   		<output name="variableMetadata2" file="out_test03.tabular"/>
   		<output name="HmdbOutWeb2" file="out_test03.html"/>
-  		<output name="HmdbOutXlsx2" file="out_test03.xlsx"/>
+  		<output name="HmdbOutXlsx2" file="out_test03.txt"/>
   	</test>
   </tests>
 
@@ -251,7 +251,7 @@ Two types of files
 	| 
 	| HMDB_TABULAR.tabular: for linking with others modules.
 	| 
-	| HMDB_XLSX.xlsx: an excel-like output permitting manual annotation cleaning. 
+	| HMDB_XLS.txt: an excel-like output permitting manual annotation cleaning. 
 	| 
 	
 ---------------------------------------------------
