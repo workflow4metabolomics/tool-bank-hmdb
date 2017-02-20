@@ -4,7 +4,6 @@
   </description>
   
   <requirements>
-  <!-- Waiting for conda improvement in Galaxy
       <requirement type="package" version="1.19">perl-soap-lite</requirement>
       <requirement type="package" version="6.15">perl-lwp-simple</requirement>
 	  <requirement type="package" version="6.15">perl-libwww-perl</requirement>
@@ -12,7 +11,6 @@
       <requirement type="package" version="1.71">perl-uri</requirement>
       <requirement type="package" version="1.33">perl-text-csv</requirement>
       <requirement type="package" version="3.49">perl-xml-twig</requirement>
-  -->
   </requirements>
   
   <stdio>
@@ -276,4 +274,8 @@ And their "W4M courses 2015":
 	
 
 	]]></help>
+	<!-- [RECOMMANDED] All citations associated to this tool (main citation given above and other references). Can be extracted from the history panel -->
+  <citations>
+    <citation type="doi">10.1093/nar/gks1065</citation>
+  </citations>
 </tool>
