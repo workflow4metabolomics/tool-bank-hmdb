@@ -1,7 +1,7 @@
 HMDB MS search - search by masses on HMDB online bank
 =====================================================
 
-[![bioconda-badge](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io) [![Build Status](https://travis-ci.org/workflow4metabolomics/tool-bank-golm-lib_search.svg?branch=master)](https://travis-ci.org/workflow4metabolomics/tool-bank-golm-lib_search)
+[![bioconda-badge](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io) [![Build Status](https://travis-ci.org/workflow4metabolomics/tool-bank-hmdb.svg?branch=master)](https://travis-ci.org/workflow4metabolomics/tool-bank-hmdb)
 
 Our project
 -----------
@@ -42,7 +42,7 @@ conda create -n tool-bank-hmdb perl-soap-lite perl-list-moreutils perl-json perl
 
 Travis
 ------
-[![Build Status](https://travis-ci.org/workflow4metabolomics/tool-bank-golm-lib_search.svg?branch=master)](https://travis-ci.org/workflow4metabolomics/tool-bank-golm-lib_search)
+[![Build Status](https://travis-ci.org/workflow4metabolomics/tool-bank-hmdb.svg?branch=master)](https://travis-ci.org/workflow4metabolomics/tool-bank-hmdb)
 
 Test and Deploy with Confidence. Easily sync your GitHub projects with Travis CI and you'll be testing your code in minutes!
 
